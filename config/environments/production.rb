@@ -24,8 +24,9 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # Vercel 在边缘终结 HTTPS，容器里收到的是 HTTP。
+  config.assume_ssl = true
+  config.public_file_server.enabled = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
@@ -46,19 +47,24 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
 
-  # Replace the default in-process memory cache store with a durable alternative.
-  config.cache_store = :solid_cache_store
-
-  # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  # 单一 DATABASE_URL 时，缓存和队列留在进程里。页面数据仍在 Postgres。
+  # 没有 DATABASE_URL 的生产部署继续用 Solid Cache / Solid Queue 的独立库。
+  if ENV["DATABASE_URL"].present?
+    config.cache_store = :memory_store
+    config.active_job.queue_adapter = :async
+  else
+    config.cache_store = :solid_cache_store
+    config.active_job.queue_adapter = :solid_queue
+    config.solid_queue.connects_to = { database: { writing: :queue } }
+  end
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  mail_host = ENV["APP_HOST"].presence || ENV["VERCEL_PROJECT_PRODUCTION_URL"].presence || ENV["VERCEL_URL"].presence || "example.com"
+  config.action_mailer.default_url_options = { host: mail_host, protocol: "https" }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {

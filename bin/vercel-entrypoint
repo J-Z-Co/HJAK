@@ -1,0 +1,19 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ -z "${DATABASE_URL:-}" ]; then
+  if [ -n "${POSTGRES_URL_NON_POOLING:-}" ]; then
+    export DATABASE_URL="$POSTGRES_URL_NON_POOLING"
+  elif [ -n "${POSTGRES_URL:-}" ]; then
+    export DATABASE_URL="$POSTGRES_URL"
+  fi
+fi
+
+if [ -z "${DATABASE_URL:-}" ]; then
+  echo "缺少数据库连接。在 Vercel 项目里接入 Postgres，或设置 DATABASE_URL。" >&2
+  exit 1
+fi
+
+echo "准备数据库并启动 Puma，端口 ${PORT}"
+bundle exec rails db:prepare
+exec bundle exec puma -C config/puma.rb

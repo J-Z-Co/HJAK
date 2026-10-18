@@ -2,6 +2,8 @@
 .gitignore
 .bundle
 .env*
+config/master.key
+config/*.key
 log/*
 tmp/*
 storage/*
