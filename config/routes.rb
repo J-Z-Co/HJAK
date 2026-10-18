@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: "users/registrations" }
   root "measurements#new"
   resources :measurements, only: [ :new, :create, :destroy ]
   resources :indices, only: [ :index, :show ], param: :key do
@@ -15,6 +15,9 @@ Rails.application.routes.draw do
   end
   delete "groups/:public_id/membership", to: "memberships#destroy", as: :group_membership
   resource :me, only: [ :show, :update ], controller: "profiles"
+  resources :suggestions, only: [ :index, :create, :destroy ] do
+    member { post :vote }
+  end
   resources :corrections, only: [ :index, :show ], param: :metric do
     resources :entries, only: [ :edit, :update, :destroy ], controller: "correction_entries"
   end

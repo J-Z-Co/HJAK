@@ -13,7 +13,7 @@ module ApplicationHelper
     when "measurements" then :record
     when "indices" then :indices
     when "groups", "group_joins", "memberships", "members/indices" then :groups
-    when "profiles", "corrections", "correction_entries" then :me
+    when "profiles", "corrections", "correction_entries", "suggestions" then :me
     end
   end
 end

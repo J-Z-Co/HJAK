@@ -45,6 +45,12 @@
     transform: scale(0.98);
   }
 
+  .btn:disabled,
+  .btn-secondary:disabled {
+    opacity: 0.4;
+    transform: none;
+  }
+
   .field-input {
     margin-top: 0.25rem;
     min-height: 2.75rem;

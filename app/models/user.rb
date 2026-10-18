@@ -7,6 +7,7 @@ class User < ApplicationRecord
   enum :sex, { male: 0, female: 1 }
 
   has_many :measurements, dependent: :destroy
+  has_many :suggestions, dependent: :destroy
   has_many :memberships, dependent: :destroy
   has_many :groups, through: :memberships
 

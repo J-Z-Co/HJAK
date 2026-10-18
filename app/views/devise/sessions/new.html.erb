@@ -11,6 +11,8 @@
     <%= f.password_field :password, autocomplete: "current-password", class: "field-input" %>
   </div>
 
+  <%= f.hidden_field :remember_me, value: "1" %>
+
   <%= f.submit "登录", class: "btn" %>
 <% end %>
 

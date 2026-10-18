@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_151831) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_18_230300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,6 +49,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_151831) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "suggestions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "parent_id"
+    t.text "body", null: false
+    t.integer "reasonable_count", default: 0, null: false
+    t.integer "wrong_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_suggestions_on_parent_id"
+    t.index ["user_id"], name: "index_suggestions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -67,4 +79,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_151831) do
   add_foreign_key "measurements", "users"
   add_foreign_key "memberships", "groups"
   add_foreign_key "memberships", "users"
+  add_foreign_key "suggestions", "suggestions", column: "parent_id"
+  add_foreign_key "suggestions", "users"
 end
