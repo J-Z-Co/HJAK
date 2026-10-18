@@ -1,0 +1,7 @@
+.git
+.gitignore
+.bundle
+.env*
+log/*
+tmp/*
+storage/*

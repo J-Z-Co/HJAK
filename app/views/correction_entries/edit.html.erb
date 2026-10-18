@@ -1,0 +1,18 @@
+<%= link_to "返回", correction_path(@metric.key), class: "text-sm underline-offset-4 hover:underline" %>
+<h1 class="mt-3 text-2xl font-semibold">修改<%= @metric.label %></h1>
+<p class="mt-3 text-sm text-stone-600">测量日 <%= correction_date(@measurement) %>。这里不改日期。</p>
+
+<%= form_with url: correction_entry_path(@metric.key, @measurement), method: :patch, class: "mt-4 flex flex-col gap-3" do %>
+  <%= label_tag :value, @metric.blood_pressure? ? "收缩压" : @metric.label, class: "block text-sm" %>
+  <%= number_field_tag :value, @value, class: "field-input", inputmode: "decimal", step: @metric.blood_pressure? ? "1" : "0.1" %>
+  <% if @metric.blood_pressure? %>
+    <%= label_tag :value_secondary, "舒张压", class: "mt-2 block text-sm" %>
+    <%= number_field_tag :value_secondary, @secondary, class: "field-input", inputmode: "decimal", step: "1" %>
+  <% end %>
+  <% if @error.present? %>
+    <p class="text-sm text-red-700"><%= @error %></p>
+  <% end %>
+  <%= submit_tag "保存修改", class: "btn" %>
+<% end %>
+
+<%= button_to "删除这次", correction_entry_path(@metric.key, @measurement), method: :delete, class: "btn-secondary mt-3", form: { data: { turbo_confirm: "删除这条记录？" } } %>

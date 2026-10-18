@@ -1,0 +1,32 @@
+<h1 class="text-2xl font-semibold">注册</h1>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "mt-6 flex flex-col gap-4" }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div>
+    <%= f.label :display_name, class: "block text-sm" %>
+    <%= f.text_field :display_name, autofocus: true, autocomplete: "nickname", required: true, class: "field-input" %>
+  </div>
+
+  <div>
+    <%= f.label :email, class: "block text-sm" %>
+    <%= f.email_field :email, autocomplete: "email", class: "field-input" %>
+  </div>
+
+  <div>
+    <%= f.label :password, class: "block text-sm" %>
+    <% if @minimum_password_length %>
+      <span class="text-sm text-stone-500">（至少 <%= @minimum_password_length %> 个字符）</span>
+    <% end %>
+    <%= f.password_field :password, autocomplete: "new-password", class: "field-input" %>
+  </div>
+
+  <div>
+    <%= f.label :password_confirmation, class: "block text-sm" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "field-input" %>
+  </div>
+
+  <%= f.submit "注册", class: "btn" %>
+<% end %>
+
+<%= link_to "登录", new_session_path(resource_name), class: "btn-secondary mt-3" %>

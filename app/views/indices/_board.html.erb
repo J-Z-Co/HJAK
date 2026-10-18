@@ -1,0 +1,26 @@
+<% brief.lines.each do |line| %>
+  <p class="mt-3 text-sm leading-6 text-stone-800"><%= line %></p>
+<% end %>
+
+<% if local_assigns[:overview] %>
+  <%= link_to "综合偏离", overview_indices_path, class: "btn-secondary mt-4" %>
+<% end %>
+
+<% brief.groups.each do |group| %>
+  <section class="mt-6">
+    <h2 class="text-lg font-semibold"><%= group.title %></h2>
+    <% if group.note %>
+      <p class="mt-2 text-sm leading-6 text-stone-600"><%= group.note %></p>
+    <% else %>
+      <p class="mt-1 text-sm text-stone-600"><%= group.status %></p>
+      <div class="mt-3 flex flex-col gap-3">
+        <% group.readings.each do |reading| %>
+          <%= render "indices/reading", reading:, badges: local_assigns[:badges] %>
+        <% end %>
+      </div>
+      <% if group.aside %>
+        <p class="mt-2 text-sm text-stone-500"><%= group.aside %></p>
+      <% end %>
+    <% end %>
+  </section>
+<% end %>

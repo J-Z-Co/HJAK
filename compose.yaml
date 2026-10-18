@@ -1,0 +1,62 @@
+name: phoenixlist
+
+services:
+  db:
+    image: postgres:16-bookworm
+    container_name: phoenixlist_db
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    image: phoenixlist-web:dev
+    container_name: phoenixlist_web
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /rails
+    # 入口只做 bundle check，然后把主进程换成网站。日志跟容器走，Docker Desktop 能直接看到。
+    entrypoint: ["/rails/bin/docker-dev-entrypoint"]
+    command: ["bin/dev"]
+    volumes:
+      - .:/rails
+      - bundle_cache:/bundle
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      RAILS_ENV: development
+      BUNDLE_PATH: /bundle
+      BUNDLE_APP_CONFIG: /bundle
+      # RubyGems 不读 BUNDLE_PATH。rails 可执行文件在 /bundle/bin，gem 本体在 /bundle。
+      # GEM_HOME 保持镜像默认的 /usr/local/bundle，foreman 才不会被卷盖住。
+      GEM_PATH: /bundle:/usr/local/bundle
+      PATH: /bundle/bin:/usr/local/bundle/bin:/usr/local/bin:/usr/bin:/bin
+      BINDING: 0.0.0.0
+    ports:
+      - "${WEB_BIND:-0.0.0.0}:${WEB_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  bundle_cache:

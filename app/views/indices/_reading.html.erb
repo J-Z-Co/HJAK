@@ -1,0 +1,8 @@
+<article id="index-<%= reading.key %>" class="surface rounded-lg bg-white px-3 py-3" style="<%= index_card_style(reading) %>">
+  <% if reading.clickable %>
+    <%= link_to reading.label, reading_href(reading), class: "block text-3xl font-semibold leading-tight", style: index_name_style(reading), data: { testid: "index-link-#{reading.key}" } %>
+  <% else %>
+    <p class="text-3xl font-semibold leading-tight" style="<%= index_name_style(reading) %>" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
+  <% end %>
+  <%= render "indices/reading_body", reading:, badges: local_assigns.fetch(:badges, false) %>
+</article>

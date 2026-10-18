@@ -1,0 +1,12 @@
+---
+description: 本地开发路径与用户既有习惯不一致时，先说明并征得同意
+alwaysApply: true
+---
+
+# 开发路径先对齐再改
+
+brandy、cracker 和本仓库已经在用的本地路径，默认继续用。包括：容器主进程就是网站、`docker compose logs` 和 Docker Desktop 能看到 web 日志、数据库端口只留在本机、手机调试走 Wi-Fi 地址。
+
+要改启动方式、日志去向、端口绑定或「容器活着但网站另起」这类安排时，先写出和现有路径的差别、对看日志和手机调试的影响，等用户同意后再改文件。不要把这种差别只写进蓝图就当成已经获准。
+
+web 服务的主进程运行 `bin/dev`。不要把主进程设成 `sleep infinity`，也不要让用户再开一个终端 `exec` 才能看到网站。gem 仍放命名卷 `/bundle`，入口仍先 `bundle check`。

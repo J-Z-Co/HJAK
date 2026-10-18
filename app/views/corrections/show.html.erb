@@ -1,0 +1,15 @@
+<%= link_to "返回", corrections_path, class: "text-sm underline-offset-4 hover:underline" %>
+<h1 class="mt-3 text-2xl font-semibold"><%= @metric.label %></h1>
+
+<% if @measurements.empty? %>
+  <p class="mt-4 text-sm text-stone-600">还没有这项记录</p>
+<% else %>
+  <div class="mt-4 flex flex-col gap-2">
+    <% @measurements.each do |measurement| %>
+      <%= link_to edit_correction_entry_path(@metric.key, measurement), class: "surface flex min-h-11 items-center justify-between rounded-lg border border-stone-200 bg-white px-3 text-base" do %>
+        <span><%= correction_date(measurement) %></span>
+        <span><%= correction_value(measurement) %> <%= @metric.unit %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

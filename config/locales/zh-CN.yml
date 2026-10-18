@@ -1,0 +1,40 @@
+zh-CN:
+  activerecord:
+    attributes:
+      user:
+        display_name: 显示名
+        email: 邮箱
+        password: 密码
+        password_confirmation: 确认密码
+  devise:
+    failure:
+      already_authenticated: 你已经登录。
+      unauthenticated: 请先登录。
+      invalid: 邮箱或密码不正确。
+      not_found_in_database: 邮箱或密码不正确。
+    sessions:
+      signed_in: 已登录。
+      signed_out: 已退出。
+      new:
+        sign_in: 登录
+    registrations:
+      signed_up: 注册成功。
+      new:
+        sign_up: 注册
+    passwords:
+      new:
+        forgot_your_password: 忘记密码
+        send_me_reset_password_instructions: 发送重置说明
+    shared:
+      links:
+        sign_in: 登录
+        sign_up: 注册
+        forgot_your_password: 忘记密码？
+        didn_t_receive_confirmation_instructions: 没有收到确认信？
+        didn_t_receive_unlock_instructions: 没有收到解锁信？
+        sign_in_with_provider: 用 %{provider} 登录
+  errors:
+    messages:
+      blank: 不能为空
+      too_short: 太短（最少 %{count} 个字符）
+      confirmation: 与确认不一致

@@ -1,0 +1,30 @@
+<%= link_to "返回群组", groups_path, class: "text-sm underline-offset-4 hover:underline" %>
+<h1 class="mt-3 text-2xl font-semibold">加入群组</h1>
+<p class="mt-3 text-sm leading-6 text-stone-600">加入后，同组成员能看到你的指数、图表，以及时效内、时效外或未点亮。</p>
+
+<% if @group %>
+  <section class="surface mt-4 rounded-lg border border-stone-200 bg-white px-3 py-3">
+    <p class="text-lg font-medium"><%= @group.name %></p>
+    <p class="mt-1 text-sm text-stone-600">代号 <%= @group.public_id %></p>
+    <%= button_to "加入", join_group_path, method: :post, params: { code: @group.public_id }, class: "btn mt-4", data: { testid: "join-group" } %>
+  </section>
+<% else %>
+  <div class="mt-4" data-controller="join-scan">
+    <div class="grid grid-cols-2 gap-2">
+      <button type="button" class="btn-secondary" data-testid="join-by-code" data-action="join-scan#showCode">输入代号</button>
+      <button type="button" class="btn-secondary" data-testid="join-by-scan" data-action="join-scan#showScan">扫描</button>
+    </div>
+    <% if @error.present? %>
+      <p class="mt-3 text-sm text-red-700"><%= @error %></p>
+    <% end %>
+    <p class="mt-3 hidden text-sm text-stone-700" data-join-scan-target="failure">这里不能打开相机，请输入代号，或用系统相机打开分享页上的二维码</p>
+    <%= form_with url: join_group_path, method: :get, data: { join_scan_target: "codePanel" }, class: "mt-4 flex flex-col gap-3" do %>
+      <label class="block text-sm" for="join-code">代号</label>
+      <input id="join-code" name="code" value="<%= @parsed %>" class="field-input" autocomplete="off" data-join-scan-target="code">
+      <button class="btn" type="submit">查看群组</button>
+    <% end %>
+    <div class="mt-4 hidden" data-join-scan-target="scanPanel">
+      <div id="join-reader" class="w-full overflow-hidden" data-join-scan-target="reader"></div>
+    </div>
+  </div>
+<% end %>

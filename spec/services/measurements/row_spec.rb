@@ -1,0 +1,25 @@
+require "rails_helper"
+
+RSpec.describe Measurements::Row, type: :service do
+  it "按浅绿、浅黄、淡紫、从未记录排序，并写出超过建议时间的天数" do
+    user = User.create!(display_name: "甲", email: "row@example.com", password: "password")
+    today = Date.new(2026, 10, 16)
+    travel_to today do
+      user.measurements.create!(
+        metric_type: "waist", recorded_on: Date.new(2026, 10, 1), recorded_at: Time.current,
+        value: 80, idempotency_key: SecureRandom.uuid
+      )
+      user.measurements.create!(
+        metric_type: "height", recorded_on: today, recorded_at: Time.current,
+        value: 140, idempotency_key: SecureRandom.uuid
+      )
+
+      rows = described_class.build(user, on: today)
+      expect(rows.map(&:key)).to eq(%w[waist height weight hip neck blood_pressure resting_heart_rate])
+      expect(rows.first.caption).to eq("已超过建议时间 12 天，上次 15 天前")
+      expect(rows.first.background).to eq("#FEF9C3")
+      expect(rows.second.background).to eq("#EDE9FE")
+      expect(rows.third.caption).to eq("还没有记录")
+    end
+  end
+end

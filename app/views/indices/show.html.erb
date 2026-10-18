@@ -1,0 +1,22 @@
+<%= link_to chart_back_label, chart_back_path, class: "text-sm underline-offset-4 hover:underline" %>
+<h1 class="mt-3 text-2xl font-semibold"><%= @reading.label %></h1>
+<% if @reading.stale_text.present? %>
+  <p class="mt-3 text-sm leading-6 text-stone-700"><%= @reading.stale_text %></p>
+<% end %>
+
+<div class="mt-4 grid grid-cols-3 gap-2">
+  <%= link_to "近 7 天", chart_range_path(@reading.key, "7d"), class: range_class(@series[:range], "7d"), data: { testid: "range-7d" } %>
+  <%= link_to "近 1 个月", chart_range_path(@reading.key, "30d"), class: range_class(@series[:range], "30d"), data: { testid: "range-30d" } %>
+  <%= link_to "近 1 年", chart_range_path(@reading.key, "365d"), class: range_class(@series[:range], "365d"), data: { testid: "range-365d" } %>
+</div>
+
+<% if @series[:points].empty? %>
+  <p class="mt-6 text-sm text-stone-600">这段时间还没有足够的记录</p>
+<% else %>
+  <% latest_point = "最近一点 #{@series[:points].last[:text] || @series[:points].last[:value]}" %>
+  <div class="mt-4 w-full overflow-hidden" data-controller="index-chart" data-index-chart-payload-value="<%= @series.to_json %>">
+    <p class="text-sm" data-index-chart-target="readout" data-latest="<%= latest_point %>"><%= latest_point %></p>
+    <svg data-index-chart-target="svg" class="mt-2 block h-auto w-full max-w-full" role="img" aria-label="<%= @reading.label %>走势"></svg>
+  </div>
+<% end %>
+<p class="mt-4 text-sm leading-6 text-stone-700"><%= @explanation %></p>

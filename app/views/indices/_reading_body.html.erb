@@ -1,0 +1,26 @@
+<% if reading.value_text.present? %>
+  <p class="mt-2 text-lg"><%= reading.value_text %></p>
+<% end %>
+<% if local_assigns[:badges] && (badge = freshness_badge(reading)) %>
+  <p class="mt-2 text-sm"><%= badge %></p>
+<% end %>
+<% if reading.profile_fields.any? && !local_assigns[:badges] %>
+  <p class="mt-2 text-sm">
+    <% reading.profile_fields.each_with_index do |field, index| %>
+      <%= "、" unless index.zero? %>
+      <%= link_to(field == :sex ? "填写性别" : "填写出生日期", me_path, class: "underline-offset-4 hover:underline") %>
+    <% end %>
+  </p>
+<% end %>
+<% if reading.note.present? %>
+  <p class="mt-2 text-sm text-stone-700">
+    <% if reading.note_anchor %>
+      <%= link_to reading.note, indices_path(anchor: "index-#{reading.note_anchor}"), class: "underline-offset-4 hover:underline" %>
+    <% else %>
+      <%= reading.note %>
+    <% end %>
+  </p>
+<% end %>
+<% if reading.stale_text.present? && !local_assigns[:badges] %>
+  <p class="mt-2 text-sm text-stone-700"><%= reading.stale_text %></p>
+<% end %>

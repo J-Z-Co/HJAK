@@ -1,0 +1,24 @@
+<h1 class="text-2xl font-semibold">我</h1>
+<% if current_user.sex.blank? || current_user.birth_date.blank? %>
+  <p class="mt-3 text-sm text-stone-700">填写后才能计算需要它们的指数</p>
+<% end %>
+
+<%= form_with model: current_user, url: me_path, method: :patch, data: { turbo: false }, class: "mt-4 flex flex-col gap-3" do |form| %>
+  <%= form.label :display_name, "显示名", class: "block text-sm" %>
+  <%= form.text_field :display_name, class: "field-input", required: true %>
+
+  <%= form.label :sex, "性别", class: "mt-2 block text-sm" %>
+  <%= form.select :sex, [ [ "男", "male" ], [ "女", "female" ] ], { include_blank: "未填写" }, class: "field-input" %>
+
+  <%= form.label :birth_date, "出生日期", class: "mt-2 block text-sm" %>
+  <%= form.date_field :birth_date, class: "field-input", max: Time.zone.today %>
+
+  <p class="text-sm text-stone-600">邮箱 <%= current_user.email %></p>
+  <%= form.submit "保存资料", class: "btn" %>
+<% end %>
+
+<div class="mt-3 flex flex-col gap-3">
+  <%= link_to "纠正误输入", corrections_path, class: "btn-secondary" %>
+  <%= link_to "修改密码", edit_user_registration_path, class: "btn-secondary" %>
+  <%= button_to "退出登录", destroy_user_session_path, method: :delete, class: "btn-secondary", data: { testid: "sign-out" } %>
+</div>

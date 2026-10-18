@@ -1,0 +1,27 @@
+module Metrics
+  class Catalog
+    Entry = Data.define(:key, :label, :unit, :interval_days, :min, :max, :secondary_min, :secondary_max) do
+      def blood_pressure?
+        key == "blood_pressure"
+      end
+    end
+
+    ENTRIES = [
+      Entry.new(key: "weight", label: "体重", unit: "kg", interval_days: 1, min: 5, max: 300, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "height", label: "身高", unit: "cm", interval_days: 365, min: 50, max: 250, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "waist", label: "腰围", unit: "cm", interval_days: 3, min: 20, max: 200, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "hip", label: "臀围", unit: "cm", interval_days: 7, min: 20, max: 200, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "neck", label: "颈围", unit: "cm", interval_days: 7, min: 15, max: 80, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "blood_pressure", label: "血压", unit: "mmHg", interval_days: 3, min: 70, max: 250, secondary_min: 40, secondary_max: 150),
+      Entry.new(key: "resting_heart_rate", label: "静息心率", unit: "次/分", interval_days: 1, min: 30, max: 220, secondary_min: nil, secondary_max: nil)
+    ].freeze
+
+    def self.all
+      ENTRIES
+    end
+
+    def self.find(key)
+      ENTRIES.find { |entry| entry.key == key.to_s }
+    end
+  end
+end
