@@ -15,14 +15,20 @@ RSpec.describe Groups::Leaderboard, type: :service do
     create(:measurement, user:, metric_type: "resting_heart_rate", recorded_on: today - days_ago)
   end
 
-  it "连续榜按连续天数从多到少，并列同名次，未满 6 岁也参加，0 天不给名次" do
+  it "本周榜按天数从多到少，并列同名次，未满 6 岁也参加，0 天不给名次" do
     travel_to today do
       [ 0, 1, 2 ].each { |days| record(child, days) }
       [ 0, 1, 2 ].each { |days| record(adult, days) }
 
-      rows = described_class.for(group, board: "streak", on: today)
+      rows = described_class.for(group, board: "week", on: today)
       expect(rows.map { |row| [ row.user.display_name, row.rank, row.value ] }).to eq([ [ "甲", 1, 3 ], [ "丙", 1, 3 ], [ "乙", nil, 0 ] ])
       expect(rows.first.value_text).to eq("3 天")
+    end
+  end
+
+  it "连续榜已取消，按地址打开时回到综合" do
+    travel_to today do
+      expect(described_class.board("streak").key).to eq("health")
     end
   end
 

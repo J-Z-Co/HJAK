@@ -37,7 +37,7 @@
         <span class="min-w-0">
           <span class="flex items-center gap-1.5 font-bold">
             <span class="truncate"><%= row.user.display_name %><%= "（我）" if row.user == current_user %></span>
-            <% if row.streak.positive? && @board.key != "streak" %>
+            <% if row.streak.positive? %>
               <span class="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-orange-100 px-1.5 text-xs font-bold text-orange-600" aria-label="连续 <%= row.streak %> 天"><%= icon(:fire, size: "size-3.5", stroke: 2.2) %><%= row.streak %></span>
             <% end %>
           </span>
