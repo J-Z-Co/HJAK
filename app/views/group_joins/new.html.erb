@@ -1,16 +1,14 @@
-<%= back_link "返回群组", groups_path %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">加入群组</h1>
-<p class="mt-1 text-sm leading-6 text-stone-500">加入后，同组成员能看到你的指数、图表，以及时效内、时效外或未点亮。</p>
+<%= hero(title: "加入群组", back: [ "返回群组", groups_path ], subtitle: "加入后，同组成员能看到你的指数、图表，以及时效内、时效外或未点亮。") %>
 
 <% if @group %>
-  <section class="card surface mt-5 text-center">
-    <span class="mx-auto inline-flex size-14 items-center justify-center rounded-full bg-accent-soft text-2xl font-semibold text-accent"><%= @group.name.first %></span>
+  <section class="card surface text-center">
+    <span class="mx-auto inline-flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-400 to-amber-400 text-2xl font-extrabold text-white"><%= @group.name.first %></span>
     <p class="mt-3 text-xl font-bold tracking-tight"><%= @group.name %></p>
     <p class="mt-1 font-mono text-sm tracking-widest text-stone-500"><%= @group.public_id %></p>
     <%= button_to "加入", join_group_path, method: :post, params: { code: @group.public_id }, class: "btn mt-5", data: { testid: "join-group" } %>
   </section>
 <% else %>
-  <div class="mt-5" data-controller="join-scan">
+  <div data-controller="join-scan">
     <div class="segmented" role="tablist">
       <button type="button" role="tab" aria-selected="true" class="segment" data-testid="join-by-code" data-join-scan-target="codeTab" data-action="join-scan#showCode">输入代号</button>
       <button type="button" role="tab" aria-selected="false" class="segment" data-testid="join-by-scan" data-join-scan-target="scanTab" data-action="join-scan#showScan">扫描</button>

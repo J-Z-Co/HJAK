@@ -1,28 +1,19 @@
-<% badge = local_assigns[:badges] && freshness_badge(reading) %>
-<% if reading.value_text.present? || badge %>
-  <div class="mt-1.5 flex items-center justify-between gap-3">
-    <p class="text-xl font-semibold tracking-tight text-stone-800"><%= reading.value_text %></p>
-    <% if badge %>
-      <span class="chip shrink-0 <%= freshness_badge_class(badge) %>"><%= badge %></span>
-    <% end %>
-  </div>
-<% end %>
 <% if reading.profile_fields.any? && !local_assigns[:badges] %>
-  <p class="relative z-10 mt-2 flex flex-wrap gap-2 text-sm">
+  <p class="relative z-10 mt-2.5 flex flex-wrap gap-2 text-sm">
     <% reading.profile_fields.each do |field| %>
-      <%= link_to(field == :sex ? "填写性别" : "填写出生日期", me_path, class: "chip border-dashed text-accent hover:bg-accent-soft") %>
+      <%= link_to(field == :sex ? "填写性别" : "填写出生日期", me_path, class: "chip border-dashed border-blue-300 font-semibold text-blue-600 hover:bg-blue-50") %>
     <% end %>
   </p>
 <% end %>
 <% if reading.note.present? %>
-  <p class="mt-2 text-sm leading-6 text-stone-600">
+  <p class="mt-2.5 text-sm leading-6 text-stone-500">
     <% if reading.note_anchor %>
-      <%= link_to reading.note, indices_path(anchor: "index-#{reading.note_anchor}"), class: "relative z-10 underline decoration-stone-300 underline-offset-4 hover:decoration-stone-600" %>
+      <%= link_to reading.note, indices_path(anchor: "index-#{reading.note_anchor}"), class: "relative z-10 font-medium text-blue-600 underline decoration-blue-200 underline-offset-4 hover:decoration-blue-500" %>
     <% else %>
       <%= reading.note %>
     <% end %>
   </p>
 <% end %>
 <% if reading.stale_text.present? && !local_assigns[:badges] %>
-  <p class="mt-2 text-sm leading-6 text-amber-800"><%= reading.stale_text %></p>
+  <p class="mt-2.5 flex items-start gap-1.5 text-xs leading-5 text-amber-700"><%= icon(:clock, size: "size-4", stroke: 2, css: "mt-px") %><span><%= reading.stale_text %></span></p>
 <% end %>

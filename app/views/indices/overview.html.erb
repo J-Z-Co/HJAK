@@ -1,13 +1,11 @@
-<%= back_link "返回指数", indices_path %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">综合偏离</h1>
+<%= hero(title: "综合偏离", back: [ "返回指数", indices_path ], subtitle: ("原点在健康区内。棒越长，离这个年龄的健康区越远。" if @board.compare? && @board.scored.any?)) %>
 
 <% if !@board.compare? %>
-  <p class="card mt-4 text-sm text-stone-600">未满 6 岁暂不比较偏离</p>
+  <p class="card text-sm text-stone-600">未满 6 岁暂不比较偏离</p>
 <% elsif @board.scored.empty? %>
-  <p class="card mt-4 text-sm text-stone-600">还没有可以比较的指数</p>
+  <p class="card text-sm text-stone-600">还没有可以比较的指数</p>
 <% else %>
-  <p class="mt-1 text-sm leading-6 text-stone-500">原点在健康区内。棒越长，离这个年龄的健康区越远。</p>
-  <div class="card surface mt-4">
+  <div class="card surface">
     <div class="flex items-baseline justify-between">
       <span class="text-sm text-stone-500">综合分</span>
       <span class="text-3xl font-bold tracking-tight" style="color: <%= ::Indices::Palette.css(@board.mean) %>"><%= format("%.2f", @board.mean) %></span>

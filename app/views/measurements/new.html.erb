@@ -1,68 +1,89 @@
-<header class="flex items-end justify-between gap-3">
-  <div>
-    <p class="eyebrow"><%= Time.zone.today.month %> 月 <%= Time.zone.today.day %> 日</p>
-    <h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">记录</h1>
+<% today = Time.zone.today %>
+<% ring = capture do %>
+  <div class="relative shrink-0" aria-label="今天已记 <%= @progress.today_done %> 项，共 <%= @progress.today_total %> 项">
+    <%= progress_ring(@progress.today_done, @progress.today_total, size: 72, stroke: 7) %>
+    <span class="absolute inset-0 flex flex-col items-center justify-center leading-none">
+      <% if @progress.today_complete? %>
+        <%= icon(:check, size: "size-7", stroke: 2.6) %>
+      <% else %>
+        <span class="text-lg font-extrabold"><%= @progress.today_done %>/<%= @progress.today_total %></span>
+        <span class="mt-0.5 text-[0.625rem] font-semibold text-white/80">今天</span>
+      <% end %>
+    </span>
   </div>
-  <div class="flex flex-wrap justify-end gap-1.5">
+<% end %>
+<%= hero(title: "记录", eyebrow: "#{today.month} 月 #{today.day} 日 · 星期#{%w[日 一 二 三 四 五 六][today.wday]}", aside: ring) do %>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-sm font-bold backdrop-blur">
+      <%= icon(:fire, size: "size-[1.125rem]", stroke: 2, css: (@progress.streak.positive? ? "text-amber-200" : "text-white/60")) %>
+      <%= @progress.streak.positive? ? "连续 #{@progress.streak} 天" : "今天开始连续记录" %>
+    </span>
     <% if current_user.birth_date %>
-      <span class="chip"><%= current_user.age_years_on(Time.zone.today) %> 岁</span>
+      <span class="inline-flex items-center rounded-full bg-white/20 px-3 py-1.5 text-sm font-semibold backdrop-blur"><%= current_user.age_years_on(today) %> 岁</span>
     <% else %>
-      <%= link_to "填写出生日期", me_path, class: "chip border-dashed text-accent hover:bg-accent-soft" %>
+      <%= link_to "填写出生日期", me_path, class: "inline-flex items-center rounded-full border border-dashed border-white/70 px-3 py-1.5 text-sm font-semibold hover:bg-white/15" %>
     <% end %>
     <% if current_user.sex %>
-      <span class="chip"><%= current_user.male? ? "男" : "女" %></span>
+      <span class="inline-flex items-center rounded-full bg-white/20 px-3 py-1.5 text-sm font-semibold backdrop-blur"><%= current_user.male? ? "男" : "女" %></span>
     <% else %>
-      <%= link_to "填写性别", me_path, class: "chip border-dashed text-accent hover:bg-accent-soft" %>
+      <%= link_to "填写性别", me_path, class: "inline-flex items-center rounded-full border border-dashed border-white/70 px-3 py-1.5 text-sm font-semibold hover:bg-white/15" %>
     <% end %>
   </div>
-</header>
+<% end %>
 
-<ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500" aria-label="颜色说明">
-  <% record_legend.each do |color, text| %>
-    <li class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background-color: <%= color %>"></span><%= text %></li>
-  <% end %>
-</ul>
-
-<%= form_with url: measurements_path, method: :post, class: "mt-4 flex flex-col gap-3", data: { controller: "record-form", action: "input->record-form#count" } do %>
+<%= form_with url: measurements_path, method: :post, class: "flex flex-col gap-3", data: { controller: "record-form", action: "input->record-form#count" } do %>
   <%= hidden_field_tag :idempotency_key, @idempotency_key %>
 
-  <div class="card surface flex items-center justify-between gap-3 py-2">
-    <%= label_tag :recorded_on, "测量日", class: "text-base font-medium" %>
-    <%= date_field_tag :recorded_on, @recorded_on, max: Time.zone.today, class: "field-input mt-0 w-auto min-w-40 text-right" %>
+  <div class="card surface flex items-center justify-between gap-3 py-2.5">
+    <%= label_tag :recorded_on, class: "flex items-center gap-3 text-base font-bold" do %>
+      <%= icon_tile(:clock, "bg-stone-100 text-stone-600", size: "size-9") %>测量日
+    <% end %>
+    <%= date_field_tag :recorded_on, @recorded_on, max: today, class: "field-input mt-0 w-auto min-w-40 text-right" %>
   </div>
   <% if @base_error.present? %>
     <p class="field-error -mt-1 px-1"><%= @base_error %></p>
   <% end %>
 
   <% @rows.each do |row| %>
-    <section class="card surface" style="<%= "background-color: #{row.background}; border-color: transparent" if row.background %>" data-testid="record-row-<%= row.key %>">
-      <div class="flex items-center justify-between gap-3">
-        <label class="text-base font-semibold" for="measurements_<%= row.key %>_value">
-          <%= row.entry.label %>
-          <span class="ml-0.5 text-sm font-normal text-stone-500"><%= row.entry.unit %></span>
-        </label>
+    <section class="card surface p-3.5 <%= record_row_ring(row) %>" data-testid="record-row-<%= row.key %>">
+      <div class="flex items-center gap-3">
+        <%= metric_tile(row.key) %>
+        <div class="min-w-0 flex-1">
+          <label class="text-base font-bold" for="measurements_<%= row.key %>_value">
+            <%= row.entry.label %><span class="ml-1 text-xs font-medium text-stone-400"><%= row.entry.unit %></span>
+          </label>
+          <p class="truncate text-xs text-stone-500"><%= row.caption %></p>
+        </div>
         <% if row.status == :never %>
-          <%= icon(:bulb, label: "点亮这项记录", css: "text-stone-400") %>
+          <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-semibold text-stone-500"><%= icon(:bulb, size: "size-4", label: "点亮这项记录") %>未点亮</span>
         <% else %>
-          <span class="text-sm text-stone-500">上次 <span class="text-base font-semibold text-stone-800"><%= latest_value_text(row) %></span></span>
+          <%= status_pill(row.status) %>
         <% end %>
       </div>
 
-      <%= sparkline_tag(row) %>
-
       <% if row.entry.blood_pressure? %>
-        <div class="mt-2 flex items-center gap-2">
-          <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-0", inputmode: "decimal", step: "1", placeholder: "收缩压", enterkeyhint: "next" %>
-          <span class="text-xl text-stone-400" aria-hidden="true">/</span>
-          <%= number_field_tag "measurements[#{row.key}][value_secondary]", row.submitted_secondary, id: "measurements_#{row.key}_value_secondary", class: "field-input mt-0", inputmode: "decimal", step: "1", placeholder: "舒张压", enterkeyhint: "next" %>
+        <div class="mt-3 flex items-center gap-2">
+          <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-0 text-lg font-semibold", inputmode: "decimal", step: "1", placeholder: record_placeholder(row, "收缩压"), enterkeyhint: "next", aria: { label: "收缩压" } %>
+          <span class="text-xl font-light text-stone-300" aria-hidden="true">/</span>
+          <%= number_field_tag "measurements[#{row.key}][value_secondary]", row.submitted_secondary, id: "measurements_#{row.key}_value_secondary", class: "field-input mt-0 text-lg font-semibold", inputmode: "decimal", step: "1", placeholder: record_placeholder(row, "舒张压", secondary: true), enterkeyhint: "next", aria: { label: "舒张压" } %>
         </div>
       <% else %>
-        <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-2", inputmode: "decimal", step: "0.1", placeholder: "本次#{row.entry.label}", enterkeyhint: "next" %>
+        <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-3 text-lg font-semibold", inputmode: "decimal", step: "0.1", placeholder: record_placeholder(row, "本次#{row.entry.label}"), enterkeyhint: "next" %>
       <% end %>
 
-      <p class="mt-2 text-sm text-stone-600"><%= row.caption %></p>
       <% if row.error.present? %>
         <p class="field-error"><%= row.error %></p>
+      <% end %>
+
+      <% if row.history.any? %>
+        <details class="group mt-2">
+          <summary class="-mx-1 inline-flex min-h-9 cursor-pointer list-none items-center gap-1 rounded-lg px-1 text-xs font-semibold text-violet-600 hover:bg-violet-50 [&::-webkit-details-marker]:hidden">
+            <%= icon(:chart_line, size: "size-4", stroke: 2) %>
+            走势 · 最近 <%= row.history.size %> 次
+            <%= icon(:chevron_right, size: "size-3.5", stroke: 2.4, css: "transition-transform group-open:rotate-90") %>
+          </summary>
+          <%= sparkline_tag(row) %>
+        </details>
       <% end %>
     </section>
   <% end %>

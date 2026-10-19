@@ -1,29 +1,49 @@
-<%= back_link "返回群组", groups_path %>
-<div class="mt-1 flex items-center justify-between gap-3">
-  <h1 class="min-w-0 truncate text-[1.75rem] font-bold leading-tight tracking-tight"><%= @group.name %></h1>
-  <%= link_to share_group_path(@group), class: "btn-secondary w-auto shrink-0 px-4" do %>
+<% share = capture do %>
+  <%= link_to share_group_path(@group), class: "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-white/25 px-4 text-sm font-bold backdrop-blur hover:bg-white/35 active:bg-white/45" do %>
     <%= icon(:qr, size: "size-5") %>分享
   <% end %>
-</div>
-<p class="mt-1 text-sm text-stone-500"><%= @rows.size %> 人 · 综合分越小越接近健康区</p>
+<% end %>
+<%= hero(title: @group.name, back: [ "返回群组", groups_path ], aside: share, subtitle: "#{@rows.size} 人 · 综合分越小越接近健康区") %>
 
-<div class="list-group surface mt-4">
+<% podium = @rows.select(&:rank).first(3) %>
+<% if podium.size >= 2 %>
+  <div class="card surface mb-3 grid grid-cols-3 items-end gap-2 pt-5 text-center" aria-label="前三名">
+    <% [ podium[1], podium[0], podium[2] ].each_with_index do |row, slot| %>
+      <% if row.nil? %>
+        <div></div>
+      <% else %>
+      <div class="flex flex-col items-center">
+        <span class="inline-flex <%= slot == 1 ? "size-16 text-2xl" : "size-12 text-lg" %> items-center justify-center rounded-full font-extrabold <%= rank_badge_class(row.rank) %>"><%= row.user.display_name.first %></span>
+        <p class="mt-1.5 max-w-full truncate text-sm font-bold"><%= row.user.display_name %></p>
+        <div class="mt-1.5 flex w-full items-center justify-center rounded-t-xl <%= slot == 1 ? "h-16 bg-amber-100 text-amber-700" : (slot.zero? ? "h-11 bg-slate-100 text-slate-600" : "h-8 bg-orange-100 text-orange-700") %> text-lg font-extrabold"><%= row.rank %></div>
+      </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="list-group surface">
   <% @rows.each do |row| %>
     <%= link_to group_member_indices_path(@group, row.user), class: "list-row", data: { testid: "member-link-#{row.user.id}" } do %>
       <span class="flex min-w-0 items-center gap-3">
-        <span class="inline-flex size-11 shrink-0 items-center justify-center rounded-full border-[3px] bg-white text-base font-semibold <%= rank_ring(row.rank) %>"><%= row.rank || "—" %></span>
+        <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-base font-extrabold <%= rank_badge_class(row.rank) %>"><%= row.rank || "—" %></span>
         <span class="min-w-0">
-          <span class="block truncate font-medium"><%= row.user.display_name %><%= "（我）" if row.user == current_user %></span>
-          <span class="block text-sm text-stone-500"><%= row.basis %></span>
+          <span class="flex items-center gap-1.5 font-bold">
+            <span class="truncate"><%= row.user.display_name %><%= "（我）" if row.user == current_user %></span>
+            <% if (streak = @streaks[row.user.id]).positive? %>
+              <span class="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-orange-100 px-1.5 text-xs font-bold text-orange-600" aria-label="连续 <%= streak %> 天"><%= icon(:fire, size: "size-3.5", stroke: 2.2) %><%= streak %></span>
+            <% end %>
+          </span>
+          <span class="block truncate text-xs text-stone-500"><%= row.basis %></span>
         </span>
       </span>
       <span class="flex shrink-0 items-center gap-1">
         <% if row.score %>
-          <span class="text-lg font-semibold tabular-nums" style="color: <%= ::Indices::Palette.css(row.score) %>"><%= format("%.2f", row.score) %></span>
+          <span class="text-lg font-extrabold tabular-nums" style="color: <%= ::Indices::Palette.css(row.score) %>"><%= format("%.2f", row.score) %></span>
         <% else %>
           <span class="text-sm text-stone-400">不排名</span>
         <% end %>
-        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
+        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-300") %>
       </span>
     <% end %>
   <% end %>
@@ -37,9 +57,9 @@
       <% if others.any? %>
         <div class="list-group">
           <% others.each do |membership| %>
-            <div class="flex min-h-13 items-center justify-between gap-3 px-4 py-2">
+            <div class="flex min-h-13 items-center justify-between gap-3 px-4 py-1">
               <span class="min-w-0 truncate"><%= membership.user.display_name %></span>
-              <%= button_to "移除", group_membership_path(@group.public_id, user_id: membership.user_id), method: :delete, aria: { label: "移除#{membership.user.display_name}" }, class: "min-h-11 shrink-0 rounded-lg px-3 text-sm font-medium text-red-700 hover:bg-red-50 active:bg-red-100", form: { data: { turbo_confirm: "把#{membership.user.display_name}移出群组？" } } %>
+              <%= button_to "移除", group_membership_path(@group.public_id, user_id: membership.user_id), method: :delete, aria: { label: "移除#{membership.user.display_name}" }, class: "min-h-11 shrink-0 rounded-lg px-3 text-sm font-semibold text-red-600 hover:bg-red-50 active:bg-red-100", form: { data: { turbo_confirm: "把#{membership.user.display_name}移出群组？" } } %>
             </div>
           <% end %>
         </div>

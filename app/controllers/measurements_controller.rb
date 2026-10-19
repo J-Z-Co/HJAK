@@ -5,6 +5,7 @@ class MeasurementsController < ApplicationController
     @recorded_on = Time.zone.today
     @idempotency_key = SecureRandom.uuid
     @rows = ::Measurements::Row.build(current_user, on: @recorded_on)
+    @progress = ::Gamification::Progress.for(current_user, rows: @rows)
   end
 
   def create
@@ -24,6 +25,7 @@ class MeasurementsController < ApplicationController
         errors: result.errors,
         submitted: measurement_params[:measurements] || {}
       )
+      @progress = ::Gamification::Progress.for(current_user, rows: @rows)
       render :new, status: :unprocessable_entity
     elsif result.already_saved
       redirect_to root_path, notice: "这次记录已经保存"

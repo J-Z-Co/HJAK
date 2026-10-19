@@ -1,0 +1,23 @@
+<%# 页顶彩色横幅。铺满栏宽，顶到状态栏；back 给出时左上角是白色返回 %>
+<header class="relative -mx-4 -mt-[max(1.25rem,env(safe-area-inset-top))] mb-5 overflow-hidden rounded-b-[2rem] bg-gradient-to-br <%= theme[:hero] %> px-5 pb-6 pt-[calc(env(safe-area-inset-top)+1rem)] text-white shadow-[0_12px_30px_-12px_rgba(76,29,149,0.45)]">
+  <div class="pointer-events-none absolute -right-10 -top-12 size-44 rounded-full bg-white/15 blur-sm" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute -bottom-16 -left-8 size-36 rounded-full bg-white/10" aria-hidden="true"></div>
+  <div class="relative">
+    <% if local_assigns[:back] %>
+      <%= link_to local_assigns[:back][1], class: "-ml-2 mb-1 inline-flex min-h-11 items-center gap-0.5 rounded-xl px-2 text-[0.9375rem] font-medium text-white/90 hover:bg-white/15 active:bg-white/25" do %>
+        <%= icon(:chevron_left, size: "size-5", stroke: 2.2) %><%= local_assigns[:back][0] %>
+      <% end %>
+    <% end %>
+    <% if local_assigns[:eyebrow] %>
+      <p class="text-xs font-semibold tracking-[0.12em] text-white/80"><%= eyebrow %></p>
+    <% end %>
+    <div class="mt-0.5 flex items-center justify-between gap-3">
+      <h1 class="min-w-0 text-[1.875rem] font-extrabold leading-tight tracking-tight [overflow-wrap:anywhere]"><%= title %></h1>
+      <%= local_assigns[:aside] %>
+    </div>
+    <% if local_assigns[:subtitle] %>
+      <p class="mt-1 text-sm text-white/85"><%= subtitle %></p>
+    <% end %>
+    <%= yield %>
+  </div>
+</header>

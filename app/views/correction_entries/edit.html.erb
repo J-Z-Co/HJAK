@@ -1,8 +1,6 @@
-<%= back_link "返回", correction_path(@metric.key) %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">修改<%= @metric.label %></h1>
-<p class="mt-1 text-sm text-stone-500">测量日 <%= correction_date(@measurement) %>。这里不改日期。</p>
+<%= hero(title: "修改#{@metric.label}", back: [ "返回", correction_path(@metric.key) ], subtitle: "测量日 #{correction_date(@measurement)}。这里不改日期。") %>
 
-<%= form_with url: correction_entry_path(@metric.key, @measurement), method: :patch, class: "card surface mt-4 flex flex-col gap-4" do %>
+<%= form_with url: correction_entry_path(@metric.key, @measurement), method: :patch, class: "card surface flex flex-col gap-4" do %>
   <div class="<%= "grid grid-cols-2 gap-3" if @metric.blood_pressure? %>">
     <div>
       <%= label_tag :value, @metric.blood_pressure? ? "收缩压" : "#{@metric.label}（#{@metric.unit}）", class: "field-label" %>

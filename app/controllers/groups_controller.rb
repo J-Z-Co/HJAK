@@ -31,6 +31,7 @@ class GroupsController < ApplicationController
     return unless @group
 
     @rows = ::Groups::Ranking.for(@group)
+    @streaks = @rows.to_h { |row| [ row.user.id, ::Gamification::Progress.for(row.user).streak ] }
     @membership = @group.memberships.find_by(user: current_user)
   end
 

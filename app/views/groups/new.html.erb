@@ -1,6 +1,5 @@
-<%= back_link "返回群组", groups_path %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">创建群组</h1>
-<%= form_with model: @group, class: "mt-5 flex flex-col gap-4" do |form| %>
+<%= hero(title: "创建群组", back: [ "返回群组", groups_path ], subtitle: "只需要一个名称。") %>
+<%= form_with model: @group, class: "card surface flex flex-col gap-4" do |form| %>
   <div>
     <%= form.label :name, "名称", class: "field-label" %>
     <%= form.text_field :name, class: "field-input", required: true, autofocus: true, placeholder: "例如：我们家", enterkeyhint: "done" %>

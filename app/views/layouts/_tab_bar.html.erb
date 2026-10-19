@@ -1,9 +1,9 @@
-<nav class="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-lg border-t border-stone-200/70 bg-white/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl" aria-label="分页">
+<nav class="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-lg border-t border-stone-200/70 bg-white/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl" aria-label="分页">
   <ul class="grid grid-cols-4">
     <% [ [ :record, "记录", root_path ], [ :indices, "指数", indices_path ], [ :groups, "群组", groups_path ], [ :me, "我", me_path ] ].each do |name, label, path| %>
       <li>
         <%= link_to path, data: { testid: "tab-#{name}" }, class: tab_class(name), aria: { current: (current_tab == name ? "page" : nil) } do %>
-          <%= icon(name, stroke: current_tab == name ? 1.9 : 1.5) %>
+          <span class="<%= tab_icon_class(name) %>"><%= icon(name, size: "size-[1.375rem]", stroke: current_tab == name ? 2 : 1.6) %></span>
           <span><%= label %></span>
         <% end %>
       </li>

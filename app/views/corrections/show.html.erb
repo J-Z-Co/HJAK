@@ -1,11 +1,9 @@
-<%= back_link "返回", corrections_path %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight"><%= @metric.label %></h1>
+<%= hero(title: @metric.label, back: [ "返回", corrections_path ], subtitle: ("点一条修改数值或删除" if @measurements.any?)) %>
 
 <% if @measurements.empty? %>
-  <p class="card mt-4 text-center text-sm text-stone-500">还没有这项记录</p>
+  <p class="card text-center text-sm text-stone-500">还没有这项记录</p>
 <% else %>
-  <p class="mt-1 text-sm text-stone-500">点一条修改数值或删除</p>
-  <div class="list-group surface mt-4">
+  <div class="list-group surface">
     <% @measurements.each do |measurement| %>
       <%= link_to edit_correction_entry_path(@metric.key, measurement), class: "list-row" do %>
         <span class="text-stone-600"><%= correction_date(measurement) %></span>

@@ -1,13 +1,29 @@
-<article id="index-<%= reading.key %>" class="card surface relative scroll-mt-4 <%= "transition-transform active:scale-[0.99] motion-reduce:transform-none" if reading.clickable %>" style="<%= index_card_style(reading) %>">
-  <div class="flex items-center justify-between gap-3">
-    <% if reading.clickable %>
-      <%= link_to reading.label, reading_href(reading), class: "min-w-0 text-[1.625rem] font-bold leading-tight tracking-tight after:absolute after:inset-0 after:rounded-[1.125rem]", style: index_name_style(reading), data: { testid: "index-link-#{reading.key}" } %>
-    <% else %>
-      <p class="min-w-0 text-[1.625rem] font-bold leading-tight tracking-tight" style="<%= index_name_style(reading) %>" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
-    <% end %>
-    <% if reading.clickable %>
-      <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
-    <% end %>
+<article id="index-<%= reading.key %>" class="card surface relative scroll-mt-4 p-3.5 <%= "transition-transform active:scale-[0.99] motion-reduce:transform-none" if reading.clickable %>">
+  <div class="flex items-center gap-3">
+    <%= index_tile(reading.key) %>
+    <div class="min-w-0 flex-1">
+      <% if reading.clickable %>
+        <%= link_to reading.label, reading_href(reading), class: "block truncate text-base font-bold after:absolute after:inset-0 after:rounded-[1.375rem]", data: { testid: "index-link-#{reading.key}" } %>
+      <% else %>
+        <p class="truncate text-base font-bold" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
+      <% end %>
+      <% if reading.value_text.present? %>
+        <p class="truncate text-xl font-extrabold tracking-tight" style="<%= index_name_style(reading) %>"><%= reading.value_text %></p>
+      <% end %>
+    </div>
+    <div class="flex shrink-0 items-center gap-1">
+      <% if local_assigns[:badges] && (badge = freshness_badge(reading)) %>
+        <span class="chip <%= freshness_badge_class(badge) %>"><%= badge %></span>
+      <% else %>
+        <%= deviation_pill(reading.deviation) %>
+      <% end %>
+      <% if reading.clickable %>
+        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-300") %>
+      <% end %>
+    </div>
   </div>
+  <% if reading.deviation %>
+    <%= deviation_meter(reading.deviation, css: "mt-3") %>
+  <% end %>
   <%= render "indices/reading_body", reading:, badges: local_assigns.fetch(:badges, false) %>
 </article>

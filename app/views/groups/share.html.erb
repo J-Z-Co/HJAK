@@ -1,8 +1,6 @@
-<%= back_link "返回", group_path(@group) %>
-<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">分享</h1>
-<p class="mt-1 text-sm text-stone-500">让家人扫码，或者输入下面的代号。</p>
+<%= hero(title: "分享", back: [ "返回", group_path(@group) ], subtitle: "让家人扫码，或者输入下面的代号。") %>
 
-<div class="card surface mt-4 flex flex-col items-center">
+<div class="card surface flex flex-col items-center">
   <div class="w-full max-w-64 [&_svg]:h-auto [&_svg]:w-full">
     <%= @qr.html_safe %>
   </div>

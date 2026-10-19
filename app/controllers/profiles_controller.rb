@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
   before_action :authenticate_user!
+  before_action :load_progress, only: %i[show update]
 
   def show
   end
@@ -13,6 +14,10 @@ class ProfilesController < ApplicationController
   end
 
   private
+
+  def load_progress
+    @progress = ::Gamification::Progress.for(current_user)
+  end
 
   def profile_params
     permitted = params.require(:user).permit(:display_name, :sex, :birth_date)

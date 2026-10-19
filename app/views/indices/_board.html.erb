@@ -1,28 +1,32 @@
 <% if brief.lines.any? %>
-  <div class="card surface mt-4 bg-white/70">
-    <% brief.lines.each_with_index do |line, index| %>
-      <p class="<%= index.zero? ? "text-[0.9375rem] font-medium text-stone-900" : "mt-1.5 text-sm text-stone-600" %> leading-6"><%= line %></p>
-    <% end %>
-    <% if local_assigns[:overview] %>
-      <%= link_to overview_indices_path, class: "btn-secondary mt-3 justify-between" do %>
-        <span>综合偏离</span><%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
+  <div class="card surface flex gap-3">
+    <%= icon_tile(:sparkles, "bg-gradient-to-br from-indigo-500 to-cyan-400 text-white", size: "size-10") %>
+    <div class="min-w-0 flex-1">
+      <% brief.lines.each_with_index do |line, index| %>
+        <p class="<%= index.zero? ? "text-[0.9375rem] font-bold text-stone-900" : "mt-1 text-sm text-stone-600" %> leading-6"><%= line %></p>
       <% end %>
-    <% end %>
+    </div>
   </div>
+  <% if local_assigns[:overview] %>
+    <%= link_to overview_indices_path, class: "list-row card surface mt-3 py-3 font-semibold" do %>
+      <span class="flex items-center gap-3"><%= icon_tile(:chart_line, "bg-blue-100 text-blue-600", size: "size-9") %>综合偏离</span>
+      <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
+    <% end %>
+  <% end %>
 <% end %>
 
 <% brief.groups.each do |group| %>
   <section class="mt-7">
-    <div class="flex items-baseline justify-between gap-3 px-1">
-      <h2 class="text-lg font-bold tracking-tight"><%= group.title %></h2>
+    <div class="flex items-center justify-between gap-3">
+      <h2 class="section-title"><%= group.title %></h2>
       <% unless group.note %>
-        <p class="text-right text-sm text-stone-500"><%= group.status %></p>
+        <span class="rounded-full bg-stone-200/70 px-2.5 py-0.5 text-xs font-semibold text-stone-600"><%= group.status %></span>
       <% end %>
     </div>
     <% if group.note %>
-      <p class="card mt-2 text-sm leading-6 text-stone-600"><%= group.note %></p>
+      <p class="card mt-2 text-sm leading-6 text-stone-500"><%= group.note %></p>
     <% else %>
-      <div class="mt-2 flex flex-col gap-2.5">
+      <div class="mt-2.5 flex flex-col gap-2.5">
         <% group.readings.each do |reading| %>
           <%= render "indices/reading", reading:, badges: local_assigns[:badges] %>
         <% end %>
