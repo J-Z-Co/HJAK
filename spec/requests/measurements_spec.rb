@@ -105,4 +105,21 @@ RSpec.describe "记录", type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
   end
+
+  describe "未到下次的行" do
+    it "收进默认关闭的折叠区，该测的行照常展开" do
+      user = create_user("early@example.com")
+      user.measurements.create!(metric_type: "height", recorded_on: Time.zone.today, recorded_at: Time.current, value: 140, idempotency_key: SecureRandom.uuid)
+      sign_in user
+
+      get root_path
+      html = Nokogiri::HTML(response.body)
+      folded = html.at_css("[data-testid=record-early]")
+      expect(folded).to be_present
+      expect(folded["open"]).to be_nil
+      expect(folded.at_css("[data-testid=record-row-height]")).to be_present
+      expect(folded.at_css("[data-testid=record-row-weight]")).to be_nil
+      expect(html.at_css("[data-testid=record-row-weight]")).to be_present
+    end
+  end
 end

@@ -7,6 +7,7 @@ module Measurements
 
     def self.build(user, on: Time.zone.today, errors: {}, submitted: {})
       grouped = user.measurements.order(recorded_on: :desc, recorded_at: :desc).group_by(&:metric_type)
+      years = user.age_years_on(on)
       Metrics::Catalog.all.map.with_index do |entry, index|
         raw = submitted[entry.key] || {}
         new(
@@ -14,6 +15,7 @@ module Measurements
           latest: grouped[entry.key]&.first,
           history: Array(grouped[entry.key]).first(30).reverse,
           on:,
+          interval: entry.interval_for(years),
           index:,
           error: errors[entry.key],
           submitted_value: raw[:value] || raw["value"],
@@ -22,11 +24,12 @@ module Measurements
       end.sort_by { |row| [ row.sort_rank, row.index ] }
     end
 
-    def initialize(entry:, latest:, history:, on:, index:, error:, submitted_value:, submitted_secondary:)
+    def initialize(entry:, latest:, history:, on:, interval:, index:, error:, submitted_value:, submitted_secondary:)
       @entry = entry
       @latest = latest
       @history = history
       @on = on
+      @interval = interval
       @index = index
       @error = error
       @submitted_value = submitted_value
@@ -40,7 +43,7 @@ module Measurements
     def status
       return :never unless latest
 
-      due = latest.recorded_on + entry.interval_days
+      due = latest.recorded_on + @interval
       if @on < due - 1
         :early
       elsif @on > due + 1
@@ -63,11 +66,11 @@ module Measurements
       when :never
         "还没有记录"
       when :early
-        "#{days_ago}，建议下次约 #{format_date(latest.recorded_on + entry.interval_days)}"
+        "#{days_ago}，建议下次约 #{format_date(latest.recorded_on + @interval)}"
       when :due
         "已到建议记录时间，上次 #{relative_day}"
       when :overdue
-        due = latest.recorded_on + entry.interval_days
+        due = latest.recorded_on + @interval
         "已超过建议时间 #{(@on - due).to_i} 天，上次 #{relative_day}"
       end
     end

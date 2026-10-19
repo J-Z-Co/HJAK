@@ -8,7 +8,8 @@
         <p class="truncate text-base font-bold" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
       <% end %>
       <% if reading.value_text.present? %>
-        <p class="truncate text-xl font-extrabold tracking-tight" style="<%= index_name_style(reading) %>"><%= reading.value_text %></p>
+        <%# 心血管是「血压，心率」两段，各占一行，不在单位中间断开 %>
+        <p class="text-xl font-extrabold leading-snug tracking-tight" style="<%= index_name_style(reading) %>"><%= safe_join(reading.value_text.split("，").map { |part| tag.span(part, class: "block whitespace-nowrap") }) %></p>
       <% end %>
     </div>
     <div class="flex shrink-0 items-center gap-1">

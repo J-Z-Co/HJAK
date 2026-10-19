@@ -8,24 +8,24 @@ module ThemeHelper
   }.freeze
 
   METRIC_STYLES = {
-    "weight" => [ :scale, "bg-violet-100 text-violet-600" ],
-    "height" => [ :arrows_up_down, "bg-sky-100 text-sky-600" ],
-    "waist" => [ :arrows_right_left, "bg-amber-100 text-amber-600" ],
-    "hip" => [ :arrows_out, "bg-rose-100 text-rose-600" ],
-    "neck" => [ :user, "bg-teal-100 text-teal-600" ],
-    "blood_pressure" => [ :heart, "bg-red-100 text-red-600" ],
-    "resting_heart_rate" => [ :pulse, "bg-pink-100 text-pink-600" ]
+    "weight" => [ :scales, "bg-violet-100 text-violet-600" ],
+    "height" => [ :body_height, "bg-sky-100 text-sky-600" ],
+    "waist" => [ :body_waist, "bg-amber-100 text-amber-600" ],
+    "hip" => [ :body_hip, "bg-rose-100 text-rose-600" ],
+    "neck" => [ :body_neck, "bg-teal-100 text-teal-600" ],
+    "blood_pressure" => [ :gauge, "bg-red-100 text-red-600" ],
+    "resting_heart_rate" => [ :heartbeat, "bg-pink-100 text-pink-600" ]
   }.freeze
 
   INDEX_STYLES = {
-    "bmi" => [ :scale, "bg-violet-100 text-violet-600" ],
-    "bmr" => [ :fire, "bg-orange-100 text-orange-600" ],
-    "navy" => [ :chart_pie, "bg-sky-100 text-sky-600" ],
-    "rfm" => [ :chart_pie, "bg-cyan-100 text-cyan-600" ],
-    "whtr" => [ :arrows_up_down, "bg-amber-100 text-amber-600" ],
-    "whr" => [ :arrows_right_left, "bg-rose-100 text-rose-600" ],
-    "central_obesity" => [ :target, "bg-yellow-100 text-yellow-700" ],
-    "cardio" => [ :heart, "bg-red-100 text-red-600" ]
+    "bmi" => [ :scales, "bg-violet-100 text-violet-600" ],
+    "bmr" => [ :flame, "bg-orange-100 text-orange-600" ],
+    "navy" => [ :drop_half, "bg-sky-100 text-sky-600" ],
+    "rfm" => [ :drop_half, "bg-cyan-100 text-cyan-600" ],
+    "whtr" => [ :body_waist, "bg-amber-100 text-amber-600" ],
+    "whr" => [ :body_hip, "bg-rose-100 text-rose-600" ],
+    "central_obesity" => [ :body_waist, "bg-yellow-100 text-yellow-700" ],
+    "cardio" => [ :heartbeat, "bg-red-100 text-red-600" ]
   }.freeze
 
   # 记录页四档时效：药丸用的颜色与文字
@@ -46,7 +46,8 @@ module ThemeHelper
   end
 
   def icon_tile(name, classes, size: "size-11")
-    tag.span(icon(name, size: "size-6", stroke: 1.8), class: "inline-flex #{size} shrink-0 items-center justify-center rounded-2xl #{classes}")
+    glyph = BodyIconsHelper::BODY_ICONS.key?(name) ? body_icon(name, size: "size-[62%]") : icon(name, size: "size-[55%]", stroke: 1.8)
+    tag.span(glyph, class: "inline-flex #{size} shrink-0 items-center justify-center rounded-2xl #{classes}")
   end
 
   def metric_tile(key, size: "size-11")

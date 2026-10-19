@@ -1,13 +1,27 @@
 module Metrics
   class Catalog
-    Entry = Data.define(:key, :label, :unit, :interval_days, :min, :max, :secondary_min, :secondary_max) do
+    # 超过 20 岁的成年人体重相对稳定，不必每天称
+    ADULT_AFTER_YEARS = 20
+
+    Entry = Data.define(:key, :label, :unit, :interval_days, :min, :max, :secondary_min, :secondary_max, :adult_interval_days) do
+      def initialize(adult_interval_days: nil, **rest)
+        super
+      end
+
       def blood_pressure?
         key == "blood_pressure"
+      end
+
+      # 建议记录间隔。years 是今天的整岁年龄，不知道年龄时按默认间隔
+      def interval_for(years)
+        return interval_days unless adult_interval_days && years && years > ADULT_AFTER_YEARS
+
+        adult_interval_days
       end
     end
 
     ENTRIES = [
-      Entry.new(key: "weight", label: "体重", unit: "kg", interval_days: 1, min: 5, max: 300, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "weight", label: "体重", unit: "kg", interval_days: 1, adult_interval_days: 7, min: 5, max: 300, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "height", label: "身高", unit: "cm", interval_days: 365, min: 50, max: 250, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "waist", label: "腰围", unit: "cm", interval_days: 3, min: 20, max: 200, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "hip", label: "臀围", unit: "cm", interval_days: 7, min: 20, max: 200, secondary_min: nil, secondary_max: nil),

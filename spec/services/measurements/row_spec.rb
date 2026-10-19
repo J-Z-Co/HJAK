@@ -22,4 +22,24 @@ RSpec.describe Measurements::Row, type: :service do
       expect(rows.third.caption).to eq("还没有记录")
     end
   end
+
+  it "超过 20 岁的人 3 天前称过体重，还没到下次；20 岁的人已经逾期" do
+    today = Date.new(2026, 10, 16)
+    travel_to today do
+      adult = User.create!(display_name: "乙", email: "adult@example.com", password: "password", birth_date: Date.new(1990, 1, 1))
+      young = User.create!(display_name: "丙", email: "young@example.com", password: "password", birth_date: Date.new(2006, 1, 1))
+      [ adult, young ].each do |user|
+        user.measurements.create!(
+          metric_type: "weight", recorded_on: today - 3, recorded_at: Time.current,
+          value: 70, idempotency_key: SecureRandom.uuid
+        )
+      end
+
+      adult_row = described_class.build(adult, on: today).find { |row| row.key == "weight" }
+      young_row = described_class.build(young, on: today).find { |row| row.key == "weight" }
+      expect(adult_row.status).to eq(:early)
+      expect(adult_row.caption).to eq("3 天前记录，建议下次约 10 月 20 日")
+      expect(young_row.status).to eq(:overdue)
+    end
+  end
 end
