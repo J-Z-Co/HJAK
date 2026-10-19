@@ -300,7 +300,7 @@ app/models/group_code.rb                     代号去空格、转大写
 ## 9. 验证
 
 - `bundle exec rspec`：63 个用例，0 失败
-- RuboCop：本分支改动的文件无问题；main 上原有 15 条（迁移文件等）未处理
+- RuboCop：全仓库无问题（main 上原有的格式问题已在本分支一并修正）
 - 用 seed 账号在 390×844 视窗逐页看过：记录（含折叠区、保存流程）、指数、单指数图、综合偏离、群组、三个排行榜、分享、加入、我、纠正误输入
 - 未在真机上看：扫码、刘海和底部横条安全区
 
@@ -322,7 +322,6 @@ app/models/group_code.rb                     代号去空格、转大写
 ## 11. 已知问题
 
 - Vercel 预览部署显示「Deployment was blocked」，属于 Vercel 项目的权限设置，不是代码问题
-- main 上原有 15 条 RuboCop 问题会让 CI 的 lint 失败
 
 ---
 
