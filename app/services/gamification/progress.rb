@@ -5,7 +5,7 @@ module Gamification
   class Progress
     Badge = Data.define(:key, :title, :hint, :icon, :earned)
 
-    attr_reader :streak, :best_streak, :today_done, :today_total, :badges, :total_records
+    attr_reader :streak, :best_streak, :week_days, :today_done, :today_total, :badges, :total_records
 
     def self.for(user, on: Time.zone.today, rows: nil)
       rows ||= ::Measurements::Row.build(user, on:)
@@ -18,6 +18,7 @@ module Gamification
       @total_records = user.measurements.count
       @streak = current_streak(dates)
       @best_streak = longest_streak(dates)
+      @week_days = dates.count { |date| date > on - 7 }
       recorded_today = user.measurements.where(recorded_on: on).distinct.pluck(:metric_type)
       waiting = rows.select { |row| %i[due overdue].include?(row.status) }.map(&:key)
       @today_done = recorded_today.size

@@ -8,4 +8,21 @@ module GroupsHelper
     else "bg-stone-100 text-stone-500"
     end
   end
+
+  def podium_step_class(rank)
+    case rank
+    when 1 then "h-16 bg-amber-100 text-amber-700"
+    when 2 then "h-11 bg-slate-100 text-slate-600"
+    else "h-8 bg-orange-100 text-orange-700"
+    end
+  end
+
+  # 综合榜用偏离色；习惯榜统一用群组的橙色
+  def leaderboard_value_style(row)
+    if row.deviation
+      "color: #{::Indices::Palette.css(row.deviation)}"
+    elsif row.rank
+      "color: #ea580c"
+    end
+  end
 end

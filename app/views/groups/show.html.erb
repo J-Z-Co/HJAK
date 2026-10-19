@@ -3,20 +3,27 @@
     <%= icon(:qr, size: "size-5") %>分享
   <% end %>
 <% end %>
-<%= hero(title: @group.name, back: [ "返回群组", groups_path ], aside: share, subtitle: "#{@rows.size} 人 · 综合分越小越接近健康区") %>
+<%= hero(title: @group.name, back: [ "返回群组", groups_path ], aside: share, subtitle: "#{@rows.size} 人 · #{@board.hint}") %>
+
+<nav class="segmented mb-3" aria-label="排行榜">
+  <% ::Groups::Leaderboard::BOARDS.each do |board| %>
+    <%= link_to board.label, group_path(@group, board: (board.key unless board.key == "health")), class: "segment", aria: { current: (board == @board ? "page" : nil) }, data: { testid: "board-#{board.key}", turbo_action: "replace" } %>
+  <% end %>
+</nav>
 
 <% podium = @rows.select(&:rank).first(3) %>
 <% if podium.size >= 2 %>
   <div class="card surface mb-3 grid grid-cols-3 items-end gap-2 pt-5 text-center" aria-label="前三名">
-    <% [ podium[1], podium[0], podium[2] ].each_with_index do |row, slot| %>
+    <% [ podium[1], podium[0], podium[2] ].each do |row| %>
       <% if row.nil? %>
         <div></div>
       <% else %>
-      <div class="flex flex-col items-center">
-        <span class="inline-flex <%= slot == 1 ? "size-16 text-2xl" : "size-12 text-lg" %> items-center justify-center rounded-full font-extrabold <%= rank_badge_class(row.rank) %>"><%= row.user.display_name.first %></span>
-        <p class="mt-1.5 max-w-full truncate text-sm font-bold"><%= row.user.display_name %></p>
-        <div class="mt-1.5 flex w-full items-center justify-center rounded-t-xl <%= slot == 1 ? "h-16 bg-amber-100 text-amber-700" : (slot.zero? ? "h-11 bg-slate-100 text-slate-600" : "h-8 bg-orange-100 text-orange-700") %> text-lg font-extrabold"><%= row.rank %></div>
-      </div>
+        <div class="flex min-w-0 flex-col items-center">
+          <span class="inline-flex <%= row.rank == 1 ? "size-16 text-2xl" : "size-12 text-lg" %> items-center justify-center rounded-full font-extrabold <%= rank_badge_class(row.rank) %>"><%= row.user.display_name.first %></span>
+          <p class="mt-1.5 max-w-full truncate text-sm font-bold"><%= row.user.display_name %></p>
+          <p class="text-xs font-semibold text-stone-500"><%= row.value_text %></p>
+          <div class="mt-1.5 flex w-full items-center justify-center rounded-t-xl <%= podium_step_class(row.rank) %> text-lg font-extrabold"><%= row.rank %></div>
+        </div>
       <% end %>
     <% end %>
   </div>
@@ -30,19 +37,15 @@
         <span class="min-w-0">
           <span class="flex items-center gap-1.5 font-bold">
             <span class="truncate"><%= row.user.display_name %><%= "（我）" if row.user == current_user %></span>
-            <% if (streak = @streaks[row.user.id]).positive? %>
-              <span class="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-orange-100 px-1.5 text-xs font-bold text-orange-600" aria-label="连续 <%= streak %> 天"><%= icon(:fire, size: "size-3.5", stroke: 2.2) %><%= streak %></span>
+            <% if row.streak.positive? && @board.key != "streak" %>
+              <span class="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-orange-100 px-1.5 text-xs font-bold text-orange-600" aria-label="连续 <%= row.streak %> 天"><%= icon(:fire, size: "size-3.5", stroke: 2.2) %><%= row.streak %></span>
             <% end %>
           </span>
-          <span class="block truncate text-xs text-stone-500"><%= row.basis %></span>
+          <span class="block truncate text-xs text-stone-500"><%= row.note %></span>
         </span>
       </span>
       <span class="flex shrink-0 items-center gap-1">
-        <% if row.score %>
-          <span class="text-lg font-extrabold tabular-nums" style="color: <%= ::Indices::Palette.css(row.score) %>"><%= format("%.2f", row.score) %></span>
-        <% else %>
-          <span class="text-sm text-stone-400">不排名</span>
-        <% end %>
+        <span class="<%= row.rank || row.deviation ? "text-lg font-extrabold tabular-nums" : "text-sm text-stone-400" %>" style="<%= leaderboard_value_style(row) %>"><%= row.value_text %></span>
         <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-300") %>
       </span>
     <% end %>
