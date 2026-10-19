@@ -23,23 +23,36 @@ RSpec.describe Measurements::Row, type: :service do
     end
   end
 
-  it "超过 20 岁的人 3 天前称过体重，还没到下次；20 岁的人已经逾期" do
+  it "超过 20 岁的人身高记过就不用更新；20 岁的人一年后仍然提醒" do
     today = Date.new(2026, 10, 16)
     travel_to today do
       adult = User.create!(display_name: "乙", email: "adult@example.com", password: "password", birth_date: Date.new(1990, 1, 1))
       young = User.create!(display_name: "丙", email: "young@example.com", password: "password", birth_date: Date.new(2006, 1, 1))
       [ adult, young ].each do |user|
         user.measurements.create!(
-          metric_type: "weight", recorded_on: today - 3, recorded_at: Time.current,
-          value: 70, idempotency_key: SecureRandom.uuid
+          metric_type: "height", recorded_on: today - 400, recorded_at: Time.current,
+          value: 170, idempotency_key: SecureRandom.uuid
         )
       end
 
-      adult_row = described_class.build(adult, on: today).find { |row| row.key == "weight" }
-      young_row = described_class.build(young, on: today).find { |row| row.key == "weight" }
-      expect(adult_row.status).to eq(:early)
-      expect(adult_row.caption).to eq("3 天前记录，建议下次约 10 月 20 日")
+      adult_row = described_class.build(adult, on: today).find { |row| row.key == "height" }
+      young_row = described_class.build(young, on: today).find { |row| row.key == "height" }
+      expect(adult_row.status).to eq(:settled)
+      expect(adult_row.caption).to eq("400 天前记录，成年后无需更新")
       expect(young_row.status).to eq(:overdue)
+    end
+  end
+
+  it "体重对成年人仍是每天" do
+    today = Date.new(2026, 10, 16)
+    travel_to today do
+      adult = User.create!(display_name: "丁", email: "adult-weight@example.com", password: "password", birth_date: Date.new(1990, 1, 1))
+      adult.measurements.create!(
+        metric_type: "weight", recorded_on: today - 3, recorded_at: Time.current,
+        value: 70, idempotency_key: SecureRandom.uuid
+      )
+
+      expect(described_class.build(adult, on: today).find { |row| row.key == "weight" }.status).to eq(:overdue)
     end
   end
 end

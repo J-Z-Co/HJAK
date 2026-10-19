@@ -1,10 +1,10 @@
 module Metrics
   class Catalog
-    # 超过 20 岁的成年人体重相对稳定，不必每天称
+    # 超过 20 岁不再长高：身高记过一次以后就不用更新
     ADULT_AFTER_YEARS = 20
 
-    Entry = Data.define(:key, :label, :unit, :interval_days, :min, :max, :secondary_min, :secondary_max, :adult_interval_days) do
-      def initialize(adult_interval_days: nil, **rest)
+    Entry = Data.define(:key, :label, :unit, :interval_days, :min, :max, :secondary_min, :secondary_max, :settles_in_adulthood) do
+      def initialize(settles_in_adulthood: false, **rest)
         super
       end
 
@@ -12,17 +12,18 @@ module Metrics
         key == "blood_pressure"
       end
 
-      # 建议记录间隔。years 是今天的整岁年龄，不知道年龄时按默认间隔
+      # 建议记录间隔（天）。years 是今天的整岁年龄，不知道年龄时按默认间隔。
+      # 返回 nil 表示记过一次之后不用再更新
       def interval_for(years)
-        return interval_days unless adult_interval_days && years && years > ADULT_AFTER_YEARS
+        return if settles_in_adulthood && years && years > ADULT_AFTER_YEARS
 
-        adult_interval_days
+        interval_days
       end
     end
 
     ENTRIES = [
-      Entry.new(key: "weight", label: "体重", unit: "kg", interval_days: 1, adult_interval_days: 7, min: 5, max: 300, secondary_min: nil, secondary_max: nil),
-      Entry.new(key: "height", label: "身高", unit: "cm", interval_days: 365, min: 50, max: 250, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "weight", label: "体重", unit: "kg", interval_days: 1, min: 5, max: 300, secondary_min: nil, secondary_max: nil),
+      Entry.new(key: "height", label: "身高", unit: "cm", interval_days: 365, settles_in_adulthood: true, min: 50, max: 250, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "waist", label: "腰围", unit: "cm", interval_days: 3, min: 20, max: 200, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "hip", label: "臀围", unit: "cm", interval_days: 7, min: 20, max: 200, secondary_min: nil, secondary_max: nil),
       Entry.new(key: "neck", label: "颈围", unit: "cm", interval_days: 7, min: 15, max: 80, secondary_min: nil, secondary_max: nil),

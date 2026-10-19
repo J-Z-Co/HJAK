@@ -27,8 +27,10 @@ module Indices
     end
 
     def self.overdue?(measurement, on, age)
-      entry = Metrics::Catalog.find(measurement.metric_type)
-      due = measurement.recorded_on + entry.interval_for(age)
+      interval = Metrics::Catalog.find(measurement.metric_type).interval_for(age)
+      return false if interval.nil?
+
+      due = measurement.recorded_on + interval
       on > due + 1
     end
     private_class_method :reading_for, :overdue?

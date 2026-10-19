@@ -21,8 +21,7 @@ RSpec.describe Gamification::Progress, type: :service do
 
   it "今天的进度 = 今天记下的项 / 今天记下的项加上该测和逾期的项" do
     travel_to today do
-      # 静息心率任何年龄都是每天；体重对成年人是每周，不适合这里
-      record("resting_heart_rate", 1)
+      record("weight", 1)
       record("waist", 10)
       record("height", 0)
 

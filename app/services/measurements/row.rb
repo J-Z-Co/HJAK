@@ -1,7 +1,7 @@
 module Measurements
   class Row
-    RANK = { due: 0, overdue: 1, early: 2, never: 3 }.freeze
-    COLORS = { due: "#DCFCE7", overdue: "#FEF9C3", early: "#EDE9FE" }.freeze
+    RANK = { due: 0, overdue: 1, early: 2, settled: 2, never: 3 }.freeze
+    COLORS = { due: "#DCFCE7", overdue: "#FEF9C3", early: "#EDE9FE", settled: "#EDE9FE" }.freeze
 
     attr_reader :entry, :latest, :history, :error, :submitted_value, :submitted_secondary, :index
 
@@ -42,6 +42,7 @@ module Measurements
 
     def status
       return :never unless latest
+      return :settled if @interval.nil?
 
       due = latest.recorded_on + @interval
       if @on < due - 1
@@ -65,6 +66,8 @@ module Measurements
       case status
       when :never
         "还没有记录"
+      when :settled
+        "#{days_ago}，成年后无需更新"
       when :early
         "#{days_ago}，建议下次约 #{format_date(latest.recorded_on + @interval)}"
       when :due

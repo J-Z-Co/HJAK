@@ -33,6 +33,7 @@ module ThemeHelper
     due: [ "bg-green-500 text-white", "该测了" ],
     overdue: [ "bg-amber-400 text-amber-950", "已逾期" ],
     early: [ "bg-violet-100 text-violet-700", "未到下次" ],
+    settled: [ "bg-stone-100 text-stone-600", "无需更新" ],
     never: [ "bg-stone-200 text-stone-600", "未点亮" ]
   }.freeze
 
