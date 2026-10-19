@@ -19,7 +19,10 @@
     <%= f.password_field :password, autocomplete: "current-password", class: "field-input", enterkeyhint: "go" %>
   </div>
 
-  <%= f.hidden_field :remember_me, value: "1" %>
+  <label class="flex min-h-11 items-center gap-3 text-sm font-medium text-stone-800">
+    <%= f.check_box :remember_me, class: "size-5 shrink-0 accent-violet-600" %>
+    下次免登录
+  </label>
 
   <%= f.submit "登录", class: "btn mt-1", data: { turbo_submits_with: "登录中…" } %>
 <% end %>

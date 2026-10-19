@@ -267,7 +267,7 @@ app/views/measurements/_row.html.erb         记录行
 app/javascript/controllers/record_form_controller.js   已填几项、滚轮失焦
 app/javascript/controllers/toast_controller.js         页顶浮条淡出
 app/services/gamification/progress.rb        连续、最长连续、本周天数、今日进度、徽章
-app/services/groups/leaderboard.rb           四个排行榜
+app/services/groups/leaderboard.rb           综合、本周、徽章三个排行榜
 app/services/metrics/catalog.rb              interval_for
 app/services/measurements/row.rb             按年龄取间隔
 app/services/indices/board.rb                过期判断按年龄取间隔
