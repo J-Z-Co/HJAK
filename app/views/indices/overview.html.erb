@@ -1,24 +1,39 @@
-<%= link_to "返回指数", indices_path, class: "text-sm underline-offset-4 hover:underline" %>
-<h1 class="mt-3 text-2xl font-semibold">综合偏离</h1>
+<%= back_link "返回指数", indices_path %>
+<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">综合偏离</h1>
 
 <% if !@board.compare? %>
-  <p class="mt-4 text-sm text-stone-700">未满 6 岁暂不比较偏离</p>
+  <p class="card mt-4 text-sm text-stone-600">未满 6 岁暂不比较偏离</p>
 <% elsif @board.scored.empty? %>
-  <p class="mt-4 text-sm text-stone-700">还没有可以比较的指数</p>
+  <p class="card mt-4 text-sm text-stone-600">还没有可以比较的指数</p>
 <% else %>
-  <p class="mt-3 text-sm text-stone-600">原点在健康区内。棒越长，离这个年龄的健康区越远。综合分 <%= format("%.2f", @board.mean) %>。</p>
-  <div class="mt-4 flex flex-col gap-4">
-    <% @board.scored.each do |reading| %>
-      <div>
-        <div class="flex items-baseline justify-between gap-3 text-sm">
-          <span><%= reading.label %></span>
-          <span><%= format("%.2f", reading.deviation) %></span>
+  <p class="mt-1 text-sm leading-6 text-stone-500">原点在健康区内。棒越长，离这个年龄的健康区越远。</p>
+  <div class="card surface mt-4">
+    <div class="flex items-baseline justify-between">
+      <span class="text-sm text-stone-500">综合分</span>
+      <span class="text-3xl font-bold tracking-tight" style="color: <%= ::Indices::Palette.css(@board.mean) %>"><%= format("%.2f", @board.mean) %></span>
+    </div>
+    <div class="mt-4 flex flex-col gap-4">
+      <% @board.scored.each do |reading| %>
+        <div>
+          <div class="flex items-baseline justify-between gap-3 text-sm">
+            <span class="font-medium"><%= reading.label %></span>
+            <span class="font-semibold" style="color: <%= ::Indices::Palette.css(reading.deviation) %>"><%= format("%.2f", reading.deviation) %></span>
+          </div>
+          <% color = ::Indices::Palette.css(reading.deviation) %>
+          <% percent = (reading.deviation.to_f.clamp(0, 2) / 2.0 * 100).round(1) %>
+          <div class="relative mt-2 h-3" role="img" aria-label="<%= reading.label %>偏离 <%= format("%.2f", reading.deviation) %>">
+            <div class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full bg-stone-100"></div>
+            <% [ 25, 50, 75 ].each do |tick| %>
+              <div class="absolute top-0 h-3 w-px bg-stone-200" style="left: <%= tick %>%"></div>
+            <% end %>
+            <div class="absolute left-0 top-1/2 h-0.5 -translate-y-1/2 rounded-full" style="width: <%= percent %>%; background-color: <%= color %>"></div>
+            <div class="absolute top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-white" style="left: <%= percent %>%; background-color: <%= color %>"></div>
+          </div>
         </div>
-        <svg viewBox="0 0 100 16" class="mt-1 block h-6 w-full max-w-full" role="img" aria-label="<%= reading.label %>偏离 <%= format("%.2f", reading.deviation) %>">
-          <line x1="0" y1="8" x2="<%= reading.deviation / 2.0 * 100 %>" y2="8" stroke="<%= ::Indices::Palette.css(reading.deviation) %>" stroke-width="2" />
-          <circle cx="<%= reading.deviation / 2.0 * 100 %>" cy="8" r="3" fill="<%= ::Indices::Palette.css(reading.deviation) %>" />
-        </svg>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
+    <div class="mt-2 flex justify-between text-[0.6875rem] text-stone-400" aria-hidden="true">
+      <span>健康区</span><span>0.5</span><span>警告界</span><span>1.5</span><span>2</span>
+    </div>
   </div>
 <% end %>

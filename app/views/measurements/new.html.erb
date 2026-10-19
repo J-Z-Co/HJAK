@@ -1,64 +1,73 @@
-<h1 class="text-2xl font-semibold">记录</h1>
-
-<section class="surface mt-4 rounded-lg border border-stone-200 bg-white px-3 py-3 text-sm">
-  <p>
-    年龄
-    <% if current_user.birth_date %>
-      <%= current_user.age_years_on(Time.zone.today) %> 岁
-    <% else %>
-      <%= link_to "填写出生日期", me_path, class: "underline-offset-4 hover:underline" %>
-    <% end %>
-  </p>
-  <p class="mt-1">
-    性别
-    <% if current_user.sex %>
-      <%= current_user.male? ? "男" : "女" %>
-    <% else %>
-      <%= link_to "填写性别", me_path, class: "underline-offset-4 hover:underline" %>
-    <% end %>
-  </p>
-</section>
-
-<%= form_with url: measurements_path, method: :post, class: "mt-4 flex flex-col gap-3" do %>
-  <%= hidden_field_tag :idempotency_key, @idempotency_key %>
-
+<header class="flex items-end justify-between gap-3">
   <div>
-    <%= label_tag :recorded_on, "测量日", class: "block text-sm" %>
-    <%= date_field_tag :recorded_on, @recorded_on, max: Time.zone.today, class: "field-input" %>
-    <% if @base_error.present? %>
-      <p class="mt-1 text-sm text-red-700"><%= @base_error %></p>
+    <p class="eyebrow"><%= Time.zone.today.month %> 月 <%= Time.zone.today.day %> 日</p>
+    <h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">记录</h1>
+  </div>
+  <div class="flex flex-wrap justify-end gap-1.5">
+    <% if current_user.birth_date %>
+      <span class="chip"><%= current_user.age_years_on(Time.zone.today) %> 岁</span>
+    <% else %>
+      <%= link_to "填写出生日期", me_path, class: "chip border-dashed text-accent hover:bg-accent-soft" %>
+    <% end %>
+    <% if current_user.sex %>
+      <span class="chip"><%= current_user.male? ? "男" : "女" %></span>
+    <% else %>
+      <%= link_to "填写性别", me_path, class: "chip border-dashed text-accent hover:bg-accent-soft" %>
     <% end %>
   </div>
+</header>
+
+<ul class="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-500" aria-label="颜色说明">
+  <% record_legend.each do |color, text| %>
+    <li class="flex items-center gap-1.5"><span class="size-2.5 rounded-full" style="background-color: <%= color %>"></span><%= text %></li>
+  <% end %>
+</ul>
+
+<%= form_with url: measurements_path, method: :post, class: "mt-4 flex flex-col gap-3", data: { controller: "record-form", action: "input->record-form#count" } do %>
+  <%= hidden_field_tag :idempotency_key, @idempotency_key %>
+
+  <div class="card surface flex items-center justify-between gap-3 py-2">
+    <%= label_tag :recorded_on, "测量日", class: "text-base font-medium" %>
+    <%= date_field_tag :recorded_on, @recorded_on, max: Time.zone.today, class: "field-input mt-0 w-auto min-w-40 text-right" %>
+  </div>
+  <% if @base_error.present? %>
+    <p class="field-error -mt-1 px-1"><%= @base_error %></p>
+  <% end %>
 
   <% @rows.each do |row| %>
-    <section class="surface rounded-lg bg-white px-3 py-3" style="<%= "background-color: #{row.background}" if row.background %>" data-testid="record-row-<%= row.key %>">
-      <div class="flex items-start justify-between gap-3">
-        <label class="text-base font-medium" for="<%= row.entry.blood_pressure? ? "measurements_#{row.key}_value" : "measurements_#{row.key}_value" %>">
+    <section class="card surface" style="<%= "background-color: #{row.background}; border-color: transparent" if row.background %>" data-testid="record-row-<%= row.key %>">
+      <div class="flex items-center justify-between gap-3">
+        <label class="text-base font-semibold" for="measurements_<%= row.key %>_value">
           <%= row.entry.label %>
-          <span class="font-normal text-stone-500"><%= row.entry.unit %></span>
+          <span class="ml-0.5 text-sm font-normal text-stone-500"><%= row.entry.unit %></span>
         </label>
         <% if row.status == :never %>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 shrink-0 text-stone-400" aria-label="点亮这项记录">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
-          </svg>
+          <%= icon(:bulb, label: "点亮这项记录", css: "text-stone-400") %>
+        <% else %>
+          <span class="text-sm text-stone-500">上次 <span class="text-base font-semibold text-stone-800"><%= latest_value_text(row) %></span></span>
         <% end %>
       </div>
 
       <%= sparkline_tag(row) %>
 
       <% if row.entry.blood_pressure? %>
-        <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input", inputmode: "decimal", step: "1", placeholder: "收缩压" %>
-        <%= number_field_tag "measurements[#{row.key}][value_secondary]", row.submitted_secondary, id: "measurements_#{row.key}_value_secondary", class: "field-input", inputmode: "decimal", step: "1", placeholder: "舒张压" %>
+        <div class="mt-2 flex items-center gap-2">
+          <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-0", inputmode: "decimal", step: "1", placeholder: "收缩压", enterkeyhint: "next" %>
+          <span class="text-xl text-stone-400" aria-hidden="true">/</span>
+          <%= number_field_tag "measurements[#{row.key}][value_secondary]", row.submitted_secondary, id: "measurements_#{row.key}_value_secondary", class: "field-input mt-0", inputmode: "decimal", step: "1", placeholder: "舒张压", enterkeyhint: "next" %>
+        </div>
       <% else %>
-        <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input", inputmode: "decimal", step: "0.1" %>
+        <%= number_field_tag "measurements[#{row.key}][value]", row.submitted_value, id: "measurements_#{row.key}_value", class: "field-input mt-2", inputmode: "decimal", step: "0.1", placeholder: "本次#{row.entry.label}", enterkeyhint: "next" %>
       <% end %>
 
-      <p class="mt-1 text-sm text-stone-600"><%= row.caption %></p>
+      <p class="mt-2 text-sm text-stone-600"><%= row.caption %></p>
       <% if row.error.present? %>
-        <p class="mt-1 text-sm text-red-700"><%= row.error %></p>
+        <p class="field-error"><%= row.error %></p>
       <% end %>
     </section>
   <% end %>
 
-  <%= submit_tag "保存本次记录", class: "btn", data: { testid: "save-measurements" } %>
+  <div class="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-10 -mx-4 mt-1 bg-gradient-to-t from-paper from-60% to-transparent px-4 pt-4 pb-2">
+    <%= submit_tag "保存本次记录", class: "btn", data: { testid: "save-measurements", record_form_target: "submit", label: "保存本次记录", turbo_submits_with: "保存中…" } %>
+  </div>
 <% end %>

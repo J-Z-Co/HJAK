@@ -1,17 +1,19 @@
-<h1 class="text-2xl font-semibold">改善建议</h1>
+<%= back_link "返回", me_path %>
+<h1 class="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight">改善建议</h1>
+<p class="mt-1 text-sm text-stone-500">大家都能看到。觉得合理就点一下，有想法可以补充。</p>
 
 <% root_draft = @suggestion if @suggestion&.parent_id.nil? && @suggestion.errors.any? %>
-<%= form_with model: root_draft || Suggestion.new, url: suggestions_path, class: "mt-4 flex flex-col gap-3" do |form| %>
-  <%= form.label :body, "写一条建议", for: "new_suggestion_body", class: "block text-sm" %>
+<%= form_with model: root_draft || Suggestion.new, url: suggestions_path, class: "card surface mt-4 flex flex-col gap-3" do |form| %>
+  <%= form.label :body, "写一条建议", for: "new_suggestion_body", class: "field-label" %>
   <%= form.text_area :body, rows: 3, maxlength: Suggestion::BODY_MAX, required: true, id: "new_suggestion_body", class: "field-input", placeholder: "想让这个应用哪里更好" %>
   <% if root_draft %>
-    <p class="text-sm text-red-700"><%= root_draft.errors.full_messages.to_sentence %></p>
+    <p class="field-error mt-0"><%= root_draft.errors.full_messages.to_sentence %></p>
   <% end %>
   <%= form.submit "提交", class: "btn" %>
 <% end %>
 
 <% if @suggestions.empty? %>
-  <p class="mt-6 text-sm text-stone-600">还没有建议</p>
+  <p class="mt-6 rounded-[1.125rem] border border-dashed border-stone-300 px-4 py-8 text-center text-sm text-stone-500">还没有建议</p>
 <% else %>
   <div class="mt-6 flex flex-col gap-3">
     <% @suggestions.each do |suggestion| %>

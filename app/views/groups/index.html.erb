@@ -1,10 +1,33 @@
-<h1 class="text-2xl font-semibold">群组</h1>
-<div class="mt-4 flex flex-col gap-3">
-  <%= link_to "创建群组", new_group_path, class: "btn" %>
-  <%= link_to "加入群组", join_group_path, class: "btn-secondary" %>
-</div>
-<div class="mt-6 flex flex-col gap-3">
-  <% @groups.each do |group| %>
-    <%= link_to group.name, group_path(group), class: "surface block min-h-11 rounded-lg border border-stone-200 bg-white px-3 py-3 hover:bg-stone-100 active:bg-stone-200", data: { testid: "group-link-#{group.public_id}" } %>
+<h1 class="text-[1.75rem] font-bold leading-tight tracking-tight">群组</h1>
+<p class="mt-1 text-sm text-stone-500">和家人互相看指数，按同一套偏离分排名。</p>
+
+<div class="mt-4 grid grid-cols-2 gap-2.5">
+  <%= link_to new_group_path, class: "btn" do %>
+    <%= icon(:plus, size: "size-5", stroke: 2) %>创建群组
+  <% end %>
+  <%= link_to join_group_path, class: "btn-secondary" do %>
+    <%= icon(:qr, size: "size-5") %>加入群组
   <% end %>
 </div>
+
+<% if @groups.any? %>
+  <div class="list-group surface mt-6">
+    <% @groups.each do |group| %>
+      <%= link_to group_path(group), class: "list-row", data: { testid: "group-link-#{group.public_id}" } do %>
+        <span class="flex min-w-0 items-center gap-3">
+          <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-base font-semibold text-accent"><%= group.name.first %></span>
+          <span class="min-w-0">
+            <span class="block truncate font-medium"><%= group.name %></span>
+            <span class="block text-sm text-stone-500"><%= group.memberships.size %> 人</span>
+          </span>
+        </span>
+        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="mt-6 rounded-[1.125rem] border border-dashed border-stone-300 px-4 py-8 text-center">
+    <%= icon(:groups, size: "size-8", css: "mx-auto text-stone-400") %>
+    <p class="mt-2 text-sm text-stone-500">还没有加入群组。创建一个，再把代号发给家人。</p>
+  </div>
+<% end %>

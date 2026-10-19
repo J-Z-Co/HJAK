@@ -1,14 +1,14 @@
 <% open_replies = !reply && suggestion.replies.any? && @open_id == suggestion.id %>
-<article class="surface rounded-lg bg-white px-3 py-3" data-controller="suggestion-card" data-suggestion-card-count-value="<%= suggestion.replies.size %>">
+<article class="<%= reply ? "rounded-xl bg-stone-50 p-3" : "card surface" %>" data-controller="suggestion-card" data-suggestion-card-count-value="<%= suggestion.replies.size %>">
   <div class="flex items-start justify-between gap-3">
-    <p class="text-sm text-stone-600"><%= suggestion.user.display_name %> · <%= suggestion_date(suggestion) %></p>
+    <p class="text-sm text-stone-500"><span class="font-medium text-stone-700"><%= suggestion.user.display_name %></span> · <%= suggestion_date(suggestion) %></p>
     <% if suggestion.user_id == current_user.id %>
-      <%= button_to "删除", suggestion_path(suggestion), method: :delete, class: "min-h-11 shrink-0 text-sm underline", form: { class: "shrink-0" } %>
+      <%= button_to "删除", suggestion_path(suggestion), method: :delete, class: "-mr-2 -mt-2 min-h-11 shrink-0 rounded-lg px-2 text-sm text-red-700 hover:bg-red-50 active:bg-red-100", form: { class: "shrink-0" } %>
     <% end %>
   </div>
 
   <p data-suggestion-card-target="body" class="mt-2 line-clamp-2 whitespace-pre-wrap break-words text-base"><%= suggestion.body %></p>
-  <button type="button" data-suggestion-card-target="expand" data-action="suggestion-card#expand" class="mt-1 hidden min-h-11 text-sm underline">展开</button>
+  <button type="button" data-suggestion-card-target="expand" data-action="suggestion-card#expand" class="mt-1 hidden min-h-11 text-sm font-medium text-accent">展开</button>
 
   <div data-suggestion-card-target="actions" class="mt-3">
     <div class="<%= reply ? "grid grid-cols-2 gap-2" : "grid grid-cols-3 gap-2" %>">
@@ -23,17 +23,17 @@
       </button>
     </div>
   </div>
-  <button type="button" data-suggestion-card-target="collapse" data-action="suggestion-card#collapse" class="mt-2 hidden min-h-11 text-sm underline">收起</button>
+  <button type="button" data-suggestion-card-target="collapse" data-action="suggestion-card#collapse" class="mt-2 hidden min-h-11 text-sm font-medium text-accent">收起</button>
 
   <% unless reply %>
     <% reply_draft = @suggestion if @reply_parent_id == suggestion.id && @suggestion&.errors&.any? %>
     <%= form_with model: reply_draft || Suggestion.new, url: suggestions_path, html: { data: { suggestion_card_target: "replyForm" }, class: "mt-3 flex flex-col gap-2 #{reply_draft ? "" : "hidden"}" } do |form| %>
       <%= hidden_field_tag :parent_id, suggestion.id %>
       <%= hidden_field_tag :list_open, open_replies ? "1" : "0", data: { suggestion_card_target: "listOpen" } %>
-      <%= form.label :body, "补充", for: "reply_body_#{suggestion.id}", class: "block text-sm" %>
+      <%= form.label :body, "补充", for: "reply_body_#{suggestion.id}", class: "field-label" %>
       <%= form.text_area :body, rows: 2, maxlength: Suggestion::BODY_MAX, required: true, id: "reply_body_#{suggestion.id}", class: "field-input" %>
       <% if reply_draft %>
-        <p class="text-sm text-red-700"><%= reply_draft.errors.full_messages.to_sentence %></p>
+        <p class="field-error mt-0"><%= reply_draft.errors.full_messages.to_sentence %></p>
       <% end %>
       <%= form.submit "提交", class: "btn" %>
     <% end %>

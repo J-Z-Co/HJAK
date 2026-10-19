@@ -1,8 +1,13 @@
-<article id="index-<%= reading.key %>" class="surface rounded-lg bg-white px-3 py-3" style="<%= index_card_style(reading) %>">
-  <% if reading.clickable %>
-    <%= link_to reading.label, reading_href(reading), class: "block text-3xl font-semibold leading-tight", style: index_name_style(reading), data: { testid: "index-link-#{reading.key}" } %>
-  <% else %>
-    <p class="text-3xl font-semibold leading-tight" style="<%= index_name_style(reading) %>" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
-  <% end %>
+<article id="index-<%= reading.key %>" class="card surface relative scroll-mt-4 <%= "transition-transform active:scale-[0.99] motion-reduce:transform-none" if reading.clickable %>" style="<%= index_card_style(reading) %>">
+  <div class="flex items-center justify-between gap-3">
+    <% if reading.clickable %>
+      <%= link_to reading.label, reading_href(reading), class: "min-w-0 text-[1.625rem] font-bold leading-tight tracking-tight after:absolute after:inset-0 after:rounded-[1.125rem]", style: index_name_style(reading), data: { testid: "index-link-#{reading.key}" } %>
+    <% else %>
+      <p class="min-w-0 text-[1.625rem] font-bold leading-tight tracking-tight" style="<%= index_name_style(reading) %>" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
+    <% end %>
+    <% if reading.clickable %>
+      <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-400") %>
+    <% end %>
+  </div>
   <%= render "indices/reading_body", reading:, badges: local_assigns.fetch(:badges, false) %>
 </article>

@@ -1,4 +1,16 @@
 module MeasurementsHelper
+  def record_legend
+    [
+      [ "#86EFAC", "该测了" ],
+      [ "#FDE047", "已逾期" ],
+      [ "#C4B5FD", "未到下次" ]
+    ]
+  end
+
+  def latest_value_text(row)
+    correction_value(row.latest)
+  end
+
   def sparkline_tag(row)
     points = row.history
     return if points.empty?
