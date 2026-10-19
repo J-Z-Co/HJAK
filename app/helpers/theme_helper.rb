@@ -18,13 +18,13 @@ module ThemeHelper
   }.freeze
 
   INDEX_STYLES = {
-    "bmi" => [ :scales, "bg-violet-100 text-violet-600" ],
+    "bmi" => [ :index_bmi, "bg-violet-100 text-violet-600" ],
     "bmr" => [ :flame, "bg-orange-100 text-orange-600" ],
-    "navy" => [ :drop_half, "bg-sky-100 text-sky-600" ],
-    "rfm" => [ :drop_half, "bg-cyan-100 text-cyan-600" ],
-    "whtr" => [ :body_waist, "bg-amber-100 text-amber-600" ],
-    "whr" => [ :body_hip, "bg-rose-100 text-rose-600" ],
-    "central_obesity" => [ :body_waist, "bg-yellow-100 text-yellow-700" ],
+    "navy" => [ :index_navy, "bg-sky-100 text-sky-600" ],
+    "rfm" => [ :index_rfm, "bg-cyan-100 text-cyan-700" ],
+    "whtr" => [ :index_whtr, "bg-amber-100 text-amber-600" ],
+    "whr" => [ :index_whr, "bg-rose-100 text-rose-600" ],
+    "central_obesity" => [ :index_central, "bg-orange-100 text-orange-600" ],
     "cardio" => [ :heartbeat, "bg-red-100 text-red-600" ]
   }.freeze
 
@@ -46,7 +46,7 @@ module ThemeHelper
   end
 
   def icon_tile(name, classes, size: "size-11")
-    glyph = BodyIconsHelper::BODY_ICONS.key?(name) ? body_icon(name, size: "size-[62%]") : icon(name, size: "size-[55%]", stroke: 1.8)
+    glyph = BodyIconsHelper::BODY_ICONS.key?(name) ? body_icon(name, size: "size-[74%]") : icon(name, size: "size-[55%]", stroke: 1.8)
     tag.span(glyph, class: "inline-flex #{size} shrink-0 items-center justify-center rounded-2xl #{classes}")
   end
 
