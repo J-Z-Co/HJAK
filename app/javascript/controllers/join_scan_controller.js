@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "codePanel", "scanPanel", "failure", "code", "reader" ]
+  static targets = [ "codePanel", "scanPanel", "failure", "code", "reader", "codeTab", "scanTab" ]
 
   disconnect() {
     this.stop()
@@ -11,12 +11,14 @@ export default class extends Controller {
     this.stop()
     this.codePanelTarget.classList.remove("hidden")
     this.scanPanelTarget.classList.add("hidden")
+    this.#select(this.codeTabTarget)
   }
 
   async showScan() {
     this.failureTarget.classList.add("hidden")
     this.codePanelTarget.classList.add("hidden")
     this.scanPanelTarget.classList.remove("hidden")
+    this.#select(this.scanTabTarget)
     await this.start()
   }
 
@@ -53,5 +55,9 @@ export default class extends Controller {
     } catch (_error) {
       // 相机已经关掉时再停一次，不需要打断离开页面。
     }
+  }
+
+  #select(tab) {
+    [ this.codeTabTarget, this.scanTabTarget ].forEach((item) => item.setAttribute("aria-selected", item === tab))
   }
 }

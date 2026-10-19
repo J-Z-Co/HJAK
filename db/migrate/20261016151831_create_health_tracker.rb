@@ -16,8 +16,8 @@ class CreateHealthTracker < ActiveRecord::Migration[8.1]
       t.uuid :idempotency_key, null: false
       t.timestamps
     end
-    add_index :measurements, [:user_id, :metric_type, :recorded_on, :recorded_at]
-    add_index :measurements, [:idempotency_key, :metric_type], unique: true
+    add_index :measurements, [ :user_id, :metric_type, :recorded_on, :recorded_at ]
+    add_index :measurements, [ :idempotency_key, :metric_type ], unique: true
 
     create_table :groups do |t|
       t.string :name, null: false
@@ -33,6 +33,6 @@ class CreateHealthTracker < ActiveRecord::Migration[8.1]
       t.datetime :joined_at, null: false
       t.timestamps
     end
-    add_index :memberships, [:group_id, :user_id], unique: true
+    add_index :memberships, [ :group_id, :user_id ], unique: true
   end
 end

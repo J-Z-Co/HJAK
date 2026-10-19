@@ -1,8 +1,30 @@
-<article id="index-<%= reading.key %>" class="surface rounded-lg bg-white px-3 py-3" style="<%= index_card_style(reading) %>">
-  <% if reading.clickable %>
-    <%= link_to reading.label, reading_href(reading), class: "block text-3xl font-semibold leading-tight", style: index_name_style(reading), data: { testid: "index-link-#{reading.key}" } %>
-  <% else %>
-    <p class="text-3xl font-semibold leading-tight" style="<%= index_name_style(reading) %>" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
+<article id="index-<%= reading.key %>" class="card surface relative scroll-mt-4 p-3.5 <%= "transition-transform active:scale-[0.99] motion-reduce:transform-none" if reading.clickable %>">
+  <div class="flex items-center gap-3">
+    <%= index_tile(reading.key) %>
+    <div class="min-w-0 flex-1">
+      <% if reading.clickable %>
+        <%= link_to reading.label, reading_href(reading), class: "block truncate text-base font-bold after:absolute after:inset-0 after:rounded-[1.375rem]", data: { testid: "index-link-#{reading.key}" } %>
+      <% else %>
+        <p class="truncate text-base font-bold" data-testid="index-link-<%= reading.key %>"><%= reading.label %></p>
+      <% end %>
+      <% if reading.value_text.present? %>
+        <%# 心血管是「血压，心率」两段，各占一行，不在单位中间断开 %>
+        <p class="text-xl font-extrabold leading-snug tracking-tight" style="<%= index_name_style(reading) %>"><%= safe_join(reading.value_text.split("，").map { |part| tag.span(part, class: "block whitespace-nowrap") }) %></p>
+      <% end %>
+    </div>
+    <div class="flex shrink-0 items-center gap-1">
+      <% if local_assigns[:badges] && (badge = freshness_badge(reading)) %>
+        <span class="chip <%= freshness_badge_class(badge) %>"><%= badge %></span>
+      <% else %>
+        <%= deviation_pill(reading.deviation) %>
+      <% end %>
+      <% if reading.clickable %>
+        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-300") %>
+      <% end %>
+    </div>
+  </div>
+  <% if reading.deviation %>
+    <%= deviation_meter(reading.deviation, css: "mt-3") %>
   <% end %>
   <%= render "indices/reading_body", reading:, badges: local_assigns.fetch(:badges, false) %>
 </article>

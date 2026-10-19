@@ -58,11 +58,21 @@ RSpec.describe Indices::Brief, type: :service do
 
   it "过期输入仍给结论，并补一句" do
     user = User.create!(display_name: "过期", email: "brief-stale@example.com", password: "password", sex: :male, birth_date: Date.new(1990, 1, 1))
+    record(user, "height", 175)
+    record(user, "weight", 70, on: Date.new(2026, 10, 1))
+
+    brief = described_class.for(Indices::Board.assemble(user, on: Date.new(2026, 10, 17)))
+
+    expect(brief.lines).to include("有过期输入，结论仍按最近一次。")
+  end
+
+  it "超过 20 岁时，一年多前的身高不算过期" do
+    user = User.create!(display_name: "成人", email: "brief-adult-height@example.com", password: "password", sex: :male, birth_date: Date.new(1990, 1, 1))
     record(user, "height", 175, on: Date.new(2025, 1, 1))
     record(user, "weight", 70)
 
     brief = described_class.for(Indices::Board.assemble(user, on: Date.new(2026, 10, 17)))
 
-    expect(brief.lines).to include("有过期输入，结论仍按最近一次。")
+    expect(brief.lines).not_to include("有过期输入，结论仍按最近一次。")
   end
 end

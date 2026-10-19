@@ -23,14 +23,18 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-stone-100 text-stone-900">
-    <div class="mx-auto min-h-dvh w-full max-w-lg bg-stone-50">
-      <main class="px-4 pt-6 <%= "pb-24" if user_signed_in? && !devise_controller? %>">
-        <% if notice.present? %>
-          <p class="surface mb-4 rounded-lg bg-[#DCFCE7] px-3 py-3 text-sm" role="status"><%= notice %></p>
-        <% end %>
-        <% if alert.present? %>
-          <p class="surface mb-4 rounded-lg bg-[#FEF9C3] px-3 py-3 text-sm" role="alert"><%= alert %></p>
+  <body class="bg-canvas text-stone-900 antialiased">
+    <div class="mx-auto min-h-dvh w-full max-w-lg bg-paper sm:shadow-[0_0_0_1px_rgba(28,25,23,0.04),0_8px_40px_-12px_rgba(28,25,23,0.12)]">
+      <main class="px-4 pt-[max(1.25rem,env(safe-area-inset-top))] <%= user_signed_in? && !devise_controller? ? "pb-28" : "pb-10" %>">
+        <% if notice.present? || alert.present? %>
+          <div class="pointer-events-none fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-40 mx-auto w-full max-w-lg px-4" data-controller="toast">
+            <% if notice.present? %>
+              <p class="flash pointer-events-auto bg-stone-900/95 text-white shadow-lg backdrop-blur" role="status"><%= icon(:check, size: "size-5", stroke: 2.4, css: "mt-px text-green-400") %><span><%= notice %></span></p>
+            <% end %>
+            <% if alert.present? %>
+              <p class="flash pointer-events-auto mt-2 bg-amber-300 text-amber-950 shadow-lg" role="alert"><%= icon(:warning, size: "size-5", stroke: 2, css: "mt-px") %><span><%= alert %></span></p>
+            <% end %>
+          </div>
         <% end %>
         <%= yield %>
       </main>

@@ -47,12 +47,11 @@ module IndicesHelper
     "color: #{::Indices::Palette.css(reading.deviation)}"
   end
 
-  def range_class(selected, range)
-    base = "flex min-h-11 items-center justify-center rounded-lg border text-sm transition-colors hover:bg-stone-100 active:bg-stone-200"
-    if selected == range
-      "#{base} border-stone-900 font-semibold"
-    else
-      "#{base} border-stone-300"
+  def freshness_badge_class(badge)
+    case badge
+    when "时效内" then "border-transparent bg-[#DCFCE7] text-green-900"
+    when "时效外" then "border-transparent bg-[#FEF9C3] text-amber-900"
+    else "text-stone-500"
     end
   end
 end

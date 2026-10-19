@@ -30,7 +30,8 @@ class GroupsController < ApplicationController
     @group = visible_group
     return unless @group
 
-    @rows = ::Groups::Ranking.for(@group)
+    @board = ::Groups::Leaderboard.board(params[:board])
+    @rows = ::Groups::Leaderboard.for(@group, board: @board.key)
     @membership = @group.memberships.find_by(user: current_user)
   end
 

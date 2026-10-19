@@ -1,8 +1,11 @@
-<%= link_to "返回", group_path(@group), class: "text-sm underline-offset-4 hover:underline" %>
-<h1 class="mt-3 text-2xl font-semibold">分享</h1>
-<p class="mt-4 text-center text-3xl tracking-[0.3em]"><%= @group.public_id %></p>
-<button type="button" class="btn-secondary mt-4" data-controller="copy-code" data-copy-code-text-value="<%= @group.public_id %>" data-action="copy-code#copy">复制代号</button>
-<div class="mx-auto mt-4 w-full max-w-full overflow-hidden [&_svg]:h-auto [&_svg]:w-full">
-  <%= @qr.html_safe %>
+<%= hero(title: "分享", back: [ "返回", group_path(@group) ], subtitle: "让家人扫码，或者输入下面的代号。") %>
+
+<div class="card surface flex flex-col items-center">
+  <div class="w-full max-w-64 [&_svg]:h-auto [&_svg]:w-full">
+    <%= @qr.html_safe %>
+  </div>
+  <p class="mt-4 text-sm text-stone-500"><%= @group.name %> · 代号</p>
+  <p class="mt-1 font-mono text-[2rem] font-semibold tracking-[0.2em] select-all"><%= @group.public_id.scan(/.{1,4}/).join(" ") %></p>
+  <button type="button" class="btn-secondary mt-4" data-controller="copy-code" data-copy-code-text-value="<%= @group.public_id %>" data-action="copy-code#copy">复制代号</button>
 </div>
-<p class="mt-4 text-sm leading-6 text-stone-600">手机用局域网地址打开时通常不能开相机。请输入代号，或用系统相机打开这张二维码。</p>
+<p class="mt-4 px-1 text-sm leading-6 text-stone-500">手机用局域网地址打开时通常不能开相机。请输入代号，或用系统相机打开这张二维码。</p>

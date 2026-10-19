@@ -15,6 +15,7 @@ module CorrectionsHelper
 
   def correction_date(measurement)
     date = measurement.recorded_on
-    "#{date.month} 月 #{date.day} 日"
+    year = date.year == Time.zone.today.year ? "" : "#{date.year} 年 "
+    "#{year}#{date.month} 月 #{date.day} 日"
   end
 end

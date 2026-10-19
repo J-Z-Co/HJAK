@@ -9,7 +9,8 @@ class GroupCode
 
       URI.decode_www_form(query).to_h["code"].presence
     else
-      text
+      # 分享页把代号排成两组四位，照着输入时会带空格
+      text.gsub(/\s+/, "").upcase
     end
   end
 end

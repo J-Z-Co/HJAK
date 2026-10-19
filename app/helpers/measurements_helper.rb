@@ -1,4 +1,20 @@
 module MeasurementsHelper
+  # 该测和逾期的行加一圈颜色，一眼看出今天要填哪几项
+  def record_row_ring(row)
+    case row.status
+    when :due then "ring-2 ring-green-400"
+    when :overdue then "ring-2 ring-amber-300"
+    end
+  end
+
+  # 输入框保持空白，占位字里带上次的数值
+  def record_placeholder(row, fallback, secondary: false)
+    return fallback unless row.latest
+
+    number = secondary ? row.latest.value_secondary : row.latest.value
+    row.entry.blood_pressure? ? "#{fallback} #{plain_number(number)}" : "上次 #{plain_number(number)}"
+  end
+
   def sparkline_tag(row)
     points = row.history
     return if points.empty?

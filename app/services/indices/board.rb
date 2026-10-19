@@ -18,16 +18,19 @@ module Indices
     end
 
     def self.reading_for(key, user, metrics, latest, on)
+      age = user.age_years_on(on)
       stale = Assessment.requirements(key, user.sex).filter_map do |metric|
         measurement = latest[metric]
-        Metrics::Catalog.find(metric).label if measurement && overdue?(measurement, on)
+        Metrics::Catalog.find(metric).label if measurement && overdue?(measurement, on, age)
       end
       Assessment.call(key:, metrics:, sex: user.sex, birth_date: user.birth_date, on:, stale_labels: stale)
     end
 
-    def self.overdue?(measurement, on)
-      entry = Metrics::Catalog.find(measurement.metric_type)
-      due = measurement.recorded_on + entry.interval_days
+    def self.overdue?(measurement, on, age)
+      interval = Metrics::Catalog.find(measurement.metric_type).interval_for(age)
+      return false if interval.nil?
+
+      due = measurement.recorded_on + interval
       on > due + 1
     end
     private_class_method :reading_for, :overdue?
