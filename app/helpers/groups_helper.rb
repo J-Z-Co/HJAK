@@ -17,10 +17,17 @@ module GroupsHelper
     end
   end
 
-  # 综合榜用偏离色；习惯榜统一用群组的橙色
   def leaderboard_value_style(row)
-    if row.deviation
+    if row.kind == "health" && row.deviation
       "color: #{::Indices::Palette.css(row.deviation)}"
+    elsif row.kind == "trend" && row.value
+      if row.value.positive?
+        "color: #15803d"
+      elsif row.value.negative?
+        "color: #be123c"
+      else
+        "color: #78716c"
+      end
     elsif row.rank
       "color: #ea580c"
     end

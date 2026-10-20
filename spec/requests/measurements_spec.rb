@@ -106,6 +106,27 @@ RSpec.describe "记录", type: :request do
     expect(response).to have_http_status(:unprocessable_content)
   end
 
+  it "体重超过两位小数时四舍五入后保存，血压小数收成整数" do
+    user = create_user("round@example.com")
+    sign_in user
+
+    post measurements_path, params: {
+      idempotency_key: SecureRandom.uuid,
+      recorded_on: Time.zone.today,
+      measurements: {
+        weight: { value: "77.055" },
+        blood_pressure: { value: "118.6", value_secondary: "76.2" }
+      }
+    }
+
+    expect(response).to redirect_to(root_path)
+    weight = user.measurements.find_by!(metric_type: "weight")
+    pressure = user.measurements.find_by!(metric_type: "blood_pressure")
+    expect(weight.value).to eq(BigDecimal("77.06"))
+    expect(pressure.value).to eq(119)
+    expect(pressure.value_secondary).to eq(76)
+  end
+
   describe "未到下次的行" do
     it "收进默认关闭的折叠区，该测的行照常展开" do
       user = create_user("early@example.com")

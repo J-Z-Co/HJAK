@@ -33,6 +33,7 @@ class MeasurementsController < ApplicationController
       redirect_to root_path, notice: "没有填写要保存的指标"
     else
       names = result.saved.map { |measurement| Metrics::Catalog.find(measurement.metric_type).label }
+      ::Nudge.resolve_for!(current_user)
       redirect_to root_path, notice: "已保存#{names.join("、")}"
     end
   end

@@ -1,2 +1,3 @@
 <%= hero(title: "#{@member.display_name}的指数", back: [ "返回", group_path(@group) ], subtitle: (@board.basis || @board.banner)) %>
+<div class="mb-3 flex justify-end"><%= refresh_button %></div>
 <%= render "indices/board", brief: @brief, badges: true, overview: false %>

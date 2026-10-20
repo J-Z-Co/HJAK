@@ -19,9 +19,10 @@ class CorrectionEntriesController < ApplicationController
       return
     end
 
+    decimals = @metric.blood_pressure? ? 0 : 2
     @measurement.update!(
-      value: ::Measurements::BatchCreate.parse(params[:value]),
-      value_secondary: @metric.blood_pressure? ? ::Measurements::BatchCreate.parse(params[:value_secondary]) : nil
+      value: ::Measurements::BatchCreate.parse(params[:value], decimals:),
+      value_secondary: @metric.blood_pressure? ? ::Measurements::BatchCreate.parse(params[:value_secondary], decimals: 0) : nil
     )
     redirect_to correction_path(@metric.key), notice: "已改这条记录"
   end

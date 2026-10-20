@@ -1,3 +1,27 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#F6F0E4"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#E7C4A6" stroke-width="8"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- 龙：左侧回环，头朝向凤 -->
+    <path d="M214 168
+             C168 176 132 214 138 262
+             C144 314 188 348 236 338
+             C268 332 286 308 278 284" stroke="#D98978" stroke-width="14"/>
+    <path d="M196 156 C176 118 206 104 214 132" stroke="#D98978" stroke-width="10"/>
+    <path d="M214 150 C228 112 258 118 246 150" stroke="#D98978" stroke-width="10"/>
+    <path d="M188 176 C150 166 132 188 142 210" stroke="#E0A882" stroke-width="7"/>
+    <path d="M178 188 C154 198 150 222 166 232" stroke="#E0A882" stroke-width="7"/>
+    <circle cx="198" cy="166" r="6.5" fill="#D98978" stroke="none"/>
+    <!-- 凤：右侧回环，尾羽收成圆 -->
+    <path d="M304 164
+             C352 156 392 198 386 252
+             C380 308 334 348 286 336" stroke="#C9A56B" stroke-width="14"/>
+    <path d="M318 150 C338 112 372 124 358 158" stroke="#E0A882" stroke-width="9"/>
+    <path d="M308 146 C324 118 348 122 342 150" stroke="#E7C4A6" stroke-width="8"/>
+    <path d="M372 236 C418 258 424 328 376 368" stroke="#E0A882" stroke-width="9"/>
+    <path d="M360 252 C398 292 386 362 334 392" stroke="#D98978" stroke-width="8"/>
+    <path d="M348 268 C374 314 348 368 304 386" stroke="#C9A56B" stroke-width="8"/>
+    <path d="M292 158 C312 164 318 176 308 184" stroke="#C9A56B" stroke-width="8"/>
+    <circle cx="312" cy="158" r="6" fill="#C9A56B" stroke="none"/>
+  </g>
 </svg>

@@ -12,6 +12,12 @@
   </div>
 <% end %>
 
+<section class="card surface mb-4 px-4 py-3 text-sm leading-6 text-stone-700" data-controller="install-hint">
+  <p class="font-bold text-stone-900">放到主屏幕</p>
+  <p class="hidden" data-install-hint-target="ios">在 Safari 点分享，再点「添加到主屏幕」。</p>
+  <p class="hidden" data-install-hint-target="android">在浏览器菜单里点「添加到主屏幕」或「安装应用」。</p>
+</section>
+
 <% if current_user.sex.blank? || current_user.birth_date.blank? %>
   <p class="flash mb-4 bg-amber-100 text-amber-900"><%= icon(:warning, size: "size-5", stroke: 2, css: "mt-px text-amber-600") %><span>填写后才能计算需要它们的指数</span></p>
 <% end %>

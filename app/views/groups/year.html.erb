@@ -1,0 +1,22 @@
+<% tools = capture do %>
+  <%= refresh_button %>
+<% end %>
+<%= hero(title: "近一年", back: [ "返回", group_path(@group) ], aside: tools, subtitle: "每个点是那一周开始前的综合偏离。越往上越接近健康区。线的交叉是相对位置。") %>
+
+<div data-controller="year-chart" data-year-chart-payload-value="<%= @chart.to_json %>">
+  <ul class="mb-3 flex flex-wrap gap-2">
+    <% @chart[:members].each do |member| %>
+      <li data-year-chart-target="legend" class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-sm font-semibold text-stone-500">
+        <span data-swatch class="size-2.5 shrink-0 rounded-full bg-stone-300" aria-hidden="true"></span>
+        <%= member[:name] %>
+        <% if member[:values].all?(&:nil?) %>
+          <span class="font-normal text-stone-400">这一年算不出</span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="card surface px-2 py-3">
+    <svg data-year-chart-target="svg" class="block h-auto w-full" role="img" aria-label="近一年综合偏离，0 在上方表示更接近健康区"></svg>
+  </div>
+</div>

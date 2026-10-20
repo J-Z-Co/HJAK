@@ -31,7 +31,18 @@
 
   <div>
     <%= f.label :password_confirmation, class: "field-label" %>
-    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "field-input", enterkeyhint: "go" %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "field-input" %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <%= f.label :sex, class: "field-label" %>
+      <%= f.select :sex, [ [ "男", "male" ], [ "女", "female" ] ], { include_blank: "请选择" }, required: true, class: "field-input" %>
+    </div>
+    <div>
+      <%= f.label :birth_date, class: "field-label" %>
+      <%= f.date_field :birth_date, max: Time.zone.today, required: true, class: "field-input", enterkeyhint: "go" %>
+    </div>
   </div>
 
   <%= f.submit "注册", class: "btn mt-1", data: { turbo_submits_with: "注册中…" } %>

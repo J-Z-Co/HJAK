@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: "users/registrations" }
+  devise_for :users, controllers: { registrations: "users/registrations", sessions: "users/sessions" }
   root "measurements#new"
   resources :measurements, only: [ :new, :create, :destroy ]
   resources :indices, only: [ :index, :show ], param: :key do
@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   get "groups/join", to: "group_joins#new", as: :join_group
   post "groups/join", to: "group_joins#create"
   resources :groups, param: :public_id, only: [ :index, :new, :create, :show, :destroy ] do
-    member { get :share }
+    member do
+      get :share
+      get :year
+      post :nudge
+    end
     resources :members, param: :user_id, only: [] do
       resources :indices, only: [ :index, :show ], param: :key, module: :members
     end
@@ -28,8 +32,8 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker, defaults: { format: :js }
 
   # Defines the root path route ("/")
   # root "posts#index"

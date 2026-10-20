@@ -54,7 +54,9 @@ RSpec.describe "记住登录", type: :request do
         display_name: "乙",
         email: "remember-register@example.com",
         password: "password",
-        password_confirmation: "password"
+        password_confirmation: "password",
+        sex: "female",
+        birth_date: "1992-03-04"
       }
     }
 

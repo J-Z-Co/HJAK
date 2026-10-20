@@ -5,6 +5,11 @@
 <% end %>
 <%= hero(title: @group.name, back: [ "返回群组", groups_path ], aside: share, subtitle: "#{@rows.size} 人 · #{@board.hint}") %>
 
+<div class="mb-3 flex items-center justify-between">
+  <%= link_to "近一年", year_group_path(@group), class: "inline-flex min-h-11 items-center text-sm font-bold text-orange-700", data: { testid: "year-link" } %>
+  <%= refresh_button %>
+</div>
+
 <nav class="segmented mb-3" aria-label="排行榜">
   <% ::Groups::Leaderboard::BOARDS.each do |board| %>
     <%= link_to board.label, group_path(@group, board: (board.key unless board.key == "health")), class: "segment", aria: { current: (board == @board ? "page" : nil) }, data: { testid: "board-#{board.key}", turbo_action: "replace" } %>
@@ -31,24 +36,31 @@
 
 <div class="list-group surface">
   <% @rows.each do |row| %>
-    <%= link_to group_member_indices_path(@group, row.user), class: "list-row", data: { testid: "member-link-#{row.user.id}" } do %>
-      <span class="flex min-w-0 items-center gap-3">
+    <div class="list-row">
+      <%= link_to group_member_indices_path(@group, row.user), class: "flex min-w-0 flex-1 items-center gap-3", data: { testid: "member-link-#{row.user.id}" } do %>
         <span class="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-base font-extrabold <%= rank_badge_class(row.rank) %>"><%= row.rank || "—" %></span>
-        <span class="min-w-0">
+        <span class="min-w-0 flex-1">
           <span class="flex items-center gap-1.5 font-bold">
             <span class="truncate"><%= row.user.display_name %><%= "（我）" if row.user == current_user %></span>
             <% if row.streak.positive? %>
               <span class="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-orange-100 px-1.5 text-xs font-bold text-orange-600" aria-label="连续 <%= row.streak %> 天"><%= icon(:fire, size: "size-3.5", stroke: 2.2) %><%= row.streak %></span>
             <% end %>
+            <% if row.nudge_count.positive? %>
+              <span class="shrink-0 text-sm" aria-label="有 <%= row.nudge_count %> 次催促，记下新测量后消失"><%= "😜" * row.nudge_count %></span>
+            <% end %>
           </span>
           <span class="block truncate text-xs text-stone-500"><%= row.note %></span>
         </span>
-      </span>
-      <span class="flex shrink-0 items-center gap-1">
         <span class="<%= row.rank || row.deviation ? "text-lg font-extrabold tabular-nums" : "text-sm text-stone-400" %>" style="<%= leaderboard_value_style(row) %>"><%= row.value_text %></span>
-        <%= icon(:chevron_right, size: "size-5", stroke: 2, css: "text-stone-300") %>
-      </span>
-    <% end %>
+      <% end %>
+      <% if row.nudgeable && row.user != current_user %>
+        <% if row.nudged_today %>
+          <span class="shrink-0 text-sm font-semibold text-stone-400">今天已催</span>
+        <% else %>
+          <%= button_to "催催", nudge_group_path(@group), method: :post, params: { subject_id: row.user.id, board: @board.key }, class: "min-h-11 shrink-0 rounded-full bg-orange-100 px-3 text-sm font-bold text-orange-700", form: { class: "shrink-0" }, aria: { label: "催促#{row.user.display_name}" } %>
+        <% end %>
+      <% end %>
+    </div>
   <% end %>
 </div>
 

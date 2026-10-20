@@ -53,6 +53,10 @@ module ApplicationHelper
     current_tab == name ? "#{base} #{ThemeHelper::TAB_THEMES[name][:pill]}" : "#{base} group-hover:bg-stone-100 group-active:bg-stone-200"
   end
 
+  def refresh_button
+    button_tag "刷新", type: "button", class: "min-h-11 rounded-full px-3 text-sm font-bold text-orange-700", data: { controller: "refresh", action: "click->refresh#refresh" }
+  end
+
   def current_tab
     case controller_path
     when "measurements" then :record

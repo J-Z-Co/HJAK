@@ -2,8 +2,13 @@ module Indices
   class Board
     attr_reader :readings, :years
 
-    def self.assemble(user, on: Time.zone.today)
-      latest = user.measurements.order(recorded_on: :desc, recorded_at: :desc).group_by(&:metric_type).transform_values(&:first)
+    def self.assemble(user, on: Time.zone.today, as_of: nil)
+      scope = user.measurements.order(recorded_on: :desc, recorded_at: :desc)
+      scope = scope.where(recorded_on: ..as_of) if as_of
+      from_latest(user, scope.group_by(&:metric_type).transform_values(&:first), on:)
+    end
+
+    def self.from_latest(user, latest, on:)
       metrics = latest.each_with_object({}) do |(key, measurement), collected|
         collected[key] = if key == "blood_pressure"
           [ measurement.value.to_f, measurement.value_secondary&.to_f ]

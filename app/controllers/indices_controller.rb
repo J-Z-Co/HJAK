@@ -4,6 +4,7 @@ class IndicesController < ApplicationController
   def index
     @board = ::Indices::Board.assemble(current_user)
     @brief = ::Indices::Brief.for(@board)
+    return if respond_to_revalidation(::Freshness.for_user(current_user))
   end
 
   def overview
@@ -24,5 +25,6 @@ class IndicesController < ApplicationController
 
     @series = ::Indices::Series.call(user: current_user, key: @reading.key, range: params[:range])
     @explanation = ::Indices::Assessment.explanation(@reading.key, years: @board.years)
+    return if respond_to_revalidation(::Freshness.for_user(current_user))
   end
 end

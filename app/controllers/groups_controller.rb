@@ -3,6 +3,7 @@ class GroupsController < ApplicationController
 
   def index
     @groups = current_user.groups.order(:name)
+    return if respond_to_revalidation(::Freshness.for_groups(current_user))
   end
 
   def new
@@ -31,8 +32,28 @@ class GroupsController < ApplicationController
     return unless @group
 
     @board = ::Groups::Leaderboard.board(params[:board])
-    @rows = ::Groups::Leaderboard.for(@group, board: @board.key)
+    @rows = ::Groups::Leaderboard.for(@group, board: @board.key, actor: current_user)
     @membership = @group.memberships.find_by(user: current_user)
+    return if respond_to_revalidation(::Freshness.for_group(@group))
+  end
+
+  def year
+    @group = visible_group
+    return unless @group
+
+    @chart = ::Groups::YearChart.for(@group)
+    return if respond_to_revalidation(::Freshness.for_group(@group))
+  end
+
+  def nudge
+    @group = visible_group
+    return unless @group
+
+    subject = @group.users.find_by(id: params[:subject_id])
+    result = ::Groups::Nudge.call(group: @group, actor: current_user, subject:)
+    flash[:notice] = result.notice if result.notice
+    flash[:alert] = result.alert if result.alert
+    redirect_to group_path(@group, board: params[:board].presence), status: :see_other
   end
 
   def share

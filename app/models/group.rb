@@ -3,6 +3,7 @@ class Group < ApplicationRecord
 
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
+  has_many :nudges, dependent: :destroy
 
   validates :name, :public_id, presence: true
   validates :public_id, format: { with: /\A[A-HJ-NP-Z2-9]{8}\z/ }

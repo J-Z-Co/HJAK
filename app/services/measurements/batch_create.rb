@@ -48,8 +48,9 @@ module Measurements
       entries = []
       Metrics::Catalog.all.each do |metric|
         raw = @rows[metric.key] || @rows[metric.key.to_sym] || {}
-        value = self.class.parse(raw[:value] || raw["value"])
-        secondary = self.class.parse(raw[:value_secondary] || raw["value_secondary"])
+        decimals = metric.blood_pressure? ? 0 : 2
+        value = self.class.parse(raw[:value] || raw["value"], decimals:)
+        secondary = self.class.parse(raw[:value_secondary] || raw["value_secondary"], decimals: 0)
         next if value.nil? && secondary.nil?
 
         error = self.class.validate_pair(metric, value, secondary)
@@ -71,17 +72,18 @@ module Measurements
 
     public
 
-    def self.parse(raw)
-      text = raw.to_s.strip
+    def self.parse(raw, decimals: 2)
+      text = raw.to_s.strip.tr("，。．", "...")
       return nil if text.empty?
 
-      BigDecimal(text)
+      BigDecimal(text).round(decimals, :half_up)
     rescue ArgumentError
       :invalid
     end
 
     def self.check(metric, raw_value, raw_secondary)
-      validate_pair(metric, parse(raw_value), parse(raw_secondary))
+      decimals = metric.blood_pressure? ? 0 : 2
+      validate_pair(metric, parse(raw_value, decimals:), parse(raw_secondary, decimals: 0))
     end
 
     def self.validate_pair(metric, value, secondary)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_18_230300) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_20_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,8 +27,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_230300) do
     t.string "metric_type", null: false
     t.date "recorded_on", null: false
     t.datetime "recorded_at", null: false
-    t.decimal "value", precision: 6, scale: 1, null: false
-    t.decimal "value_secondary", precision: 6, scale: 1
+    t.decimal "value", precision: 6, scale: 2, null: false
+    t.decimal "value_secondary", precision: 6, scale: 2
     t.uuid "idempotency_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -47,6 +47,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_230300) do
     t.index ["group_id", "user_id"], name: "index_memberships_on_group_id_and_user_id", unique: true
     t.index ["group_id"], name: "index_memberships_on_group_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "nudges", force: :cascade do |t|
+    t.bigint "group_id", null: false
+    t.bigint "actor_id", null: false
+    t.bigint "subject_id", null: false
+    t.date "nudged_on", null: false
+    t.datetime "resolved_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_nudges_on_actor_id"
+    t.index ["group_id", "actor_id", "subject_id", "nudged_on"], name: "index_nudges_once_per_day", unique: true
+    t.index ["group_id"], name: "index_nudges_on_group_id"
+    t.index ["subject_id"], name: "index_nudges_on_subject_id"
   end
 
   create_table "suggestions", force: :cascade do |t|
@@ -79,6 +93,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_18_230300) do
   add_foreign_key "measurements", "users"
   add_foreign_key "memberships", "groups"
   add_foreign_key "memberships", "users"
+  add_foreign_key "nudges", "groups"
+  add_foreign_key "nudges", "users", column: "actor_id"
+  add_foreign_key "nudges", "users", column: "subject_id"
   add_foreign_key "suggestions", "suggestions", column: "parent_id"
   add_foreign_key "suggestions", "users"
 end

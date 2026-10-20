@@ -31,7 +31,7 @@
   </div>
 <% end %>
 
-<%= form_with url: measurements_path, method: :post, class: "flex flex-col gap-3", data: { controller: "record-form", action: "input->record-form#count" } do %>
+<%= form_with url: measurements_path, method: :post, html: { novalidate: true, class: "flex flex-col gap-3" }, data: { controller: "record-form", action: "input->record-form#count submit->record-form#round" } do %>
   <%= hidden_field_tag :idempotency_key, @idempotency_key %>
 
   <div class="card surface flex items-center justify-between gap-3 py-2.5">
