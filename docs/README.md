@@ -11,5 +11,6 @@
 | [`blueprints/client_cache_v1.md`](blueprints/client_cache_v1.md) | 页面缓存与加载回弹（0.2 草案）。样式长缓存；指数和群组按用户缓存 6 小时，先显示再核对 |
 | [`blueprints/group_nudge_v1.md`](blueprints/group_nudge_v1.md) | 群组催催（0.2 草案）。每天一次，表情 😜，图标留到对方新保存一条测量。系统推送后做 |
 | [`blueprints/remaining_work_v1.md`](blueprints/remaining_work_v1.md) | 工作规划（0.1，已确认）。榜单、年图、催催、回弹、缓存按此落实。推送不做 |
+| [`blueprints/experience_v1.md`](blueprints/experience_v1.md) | 用户体验优化（0.4 草案）。数据库留在新加坡。容器区域改为 `sin1`。生产页用同域统计脚本 |
 
 应用已在容器内生成。日常开发用 `docker compose exec web bash`，看页面用 `docker compose exec web bin/dev`。

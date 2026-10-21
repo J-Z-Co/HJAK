@@ -61,7 +61,7 @@ curl -sI https://hjak.vercel.app/
 |------|------|
 | `Dockerfile.vercel` | 生产镜像。编译样式后监听 `PORT`，默认 80 |
 | `bin/vercel-entrypoint` | 把 `POSTGRES_URL_NON_POOLING` 或 `POSTGRES_URL` 抄成 `DATABASE_URL`，执行 `rails db:prepare`，再启动 Puma |
-| `vercel.json` | 声明容器服务 `web`，并把全部路径转给它 |
+| `vercel.json` | 声明容器服务 `web`，计算区域 `sin1`（新加坡）。除 `/_vercel/` 外的路径转给容器 |
 | `config/database.yml` 的 `DATABASE_URL` 分支 | 只有一份主库。不再要求 cache / queue / cable 三个库 |
 | `config/environments/production.rb` | `assume_ssl` 打开；有 `DATABASE_URL` 时缓存用内存、任务用 async |
 | `config/cable.yml`、`config/cache.yml` | 有 `DATABASE_URL` 时不再去连名为 cable、cache 的库 |
@@ -83,6 +83,7 @@ curl -sI https://hjak.vercel.app/
 | `SOLID_QUEUE_IN_PUMA` | 不设置 |
 | `PORT` | 不设置。容器默认 80，Puma 读取 `PORT` |
 | `APP_HOST` | 现在可以不设。邮件链接会用 Vercel 提供的生产域名 |
+| 计算区域 | 跟随 `vercel.json` 的 `sin1`。部署后 `x-vercel-id` 应含 `sin1`。数据库仍是 `ap-southeast-1`，不要另建库 |
 
 Hobby 套餐可以跑这个容器。空闲大约 5 分钟后实例会停，下次打开要等它再启动并做一次 `db:prepare`。迁移已经做过时，这一步只是核对，不是重灌数据。单次最长约 300 秒，内存 2 GB。
 

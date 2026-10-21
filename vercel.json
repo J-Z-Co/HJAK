@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
   "services": {
     "web": {
       "root": ".",
@@ -8,6 +9,6 @@
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": { "service": "web" } }
+    { "source": "/:path((?!_vercel/).*)", "destination": { "service": "web" } }
   ]
 }
