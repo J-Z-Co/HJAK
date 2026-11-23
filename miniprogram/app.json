@@ -1,0 +1,27 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/record/record",
+    "pages/detail/detail",
+    "pages/groups/groups",
+    "pages/group/group",
+    "pages/suggestions/suggestions",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "navigationBarTitleText": "健康指数",
+    "navigationBarBackgroundColor": "#0f766e",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8fafc"
+  },
+  "tabBar": {
+    "color": "#64748b",
+    "selectedColor": "#0f766e",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "指数" },
+      { "pagePath": "pages/groups/groups", "text": "群组" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

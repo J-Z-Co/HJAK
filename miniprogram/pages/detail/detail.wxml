@@ -1,0 +1,16 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="tip">加载中…</view>
+  <block wx:else>
+    <view class="card">
+      <view class="label">{{reading.label}}</view>
+      <view class="value">{{reading.value_text || '—'}}</view>
+      <view class="note">{{reading.note || reading.stale_text || ''}}</view>
+    </view>
+    <view class="card">
+      <view class="exp">{{explanation}}</view>
+    </view>
+    <view class="card" wx:if="{{series && series.points.length}}">
+      <view class="point" wx:for="{{series.points}}" wx:key="at">{{item.label}}</view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="card">
+    <view class="subtitle">我的群组</view>
+    <view wx:if="{{!loading && groups.length === 0}}" class="tip">还没有群组</view>
+    <view class="group" wx:for="{{groups}}" wx:key="public_id" data-id="{{item.public_id}}" bindtap="open">
+      <text class="gname">{{item.name}}</text>
+      <text class="gcode">代号 {{item.public_id}} · {{item.member_count}} 人 · {{item.role === 'owner' ? '群主' : '成员'}}</text>
+    </view>
+  </view>
+  <view class="card">
+    <view class="subtitle">创建群组</view>
+    <input class="input" value="{{newName}}" placeholder="群组名称" bindinput="onName" />
+    <button class="primary" bindtap="create">创建</button>
+  </view>
+  <view class="card">
+    <view class="subtitle">加入群组</view>
+    <input class="input" value="{{joinCode}}" placeholder="8 位代号或分享链接" bindinput="onCode" />
+    <button class="primary" bindtap="join">加入</button>
+  </view>
+</view>

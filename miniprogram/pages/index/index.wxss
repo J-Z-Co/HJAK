@@ -1,0 +1,10 @@
+.brief-line { color: #334155; line-height: 1.6; font-size: 28rpx; }
+.grid { display: flex; flex-wrap: wrap; }
+.cell { width: 46%; margin: 2%; background: #fff; border-radius: 16rpx; padding: 20rpx; box-sizing: border-box; }
+.cell-label { color: #64748b; font-size: 24rpx; }
+.cell-value { font-size: 36rpx; font-weight: 600; color: #0f172a; margin: 8rpx 0; }
+.cell-note { color: #94a3b8; font-size: 22rpx; }
+.cell.scored { border-left: 6rpx solid #22c55e; }
+.cell.reference { border-left: 6rpx solid #0ea5e9; }
+.cell.missing { border-left: 6rpx solid #e2e8f0; }
+.cell.inapplicable { border-left: 6rpx solid #e2e8f0; }

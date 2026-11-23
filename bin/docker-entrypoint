@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+cd /rails
+
+if [ -z "${DATABASE_URL:-}" ]; then
+  echo "缺少 DATABASE_URL，请在 docker-compose.prod.yml 的 web 服务里设置。" >&2
+  exit 1
+fi
+
+echo "==> 准备数据库"
+bundle exec rails db:prepare
+
+mkdir -p tmp/pids
+rm -f tmp/pids/server.pid
+
+exec "$@"

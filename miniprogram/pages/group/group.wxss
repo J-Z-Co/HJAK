@@ -1,0 +1,13 @@
+.gname { font-size: 34rpx; font-weight: 600; }
+.gcode { color: #94a3b8; font-size: 24rpx; margin-top: 8rpx; }
+.tabs { display: flex; margin-bottom: 24rpx; background: #fff; border-radius: 12rpx; overflow: hidden; }
+.tab { flex: 1; text-align: center; padding: 20rpx 0; color: #64748b; font-size: 28rpx; }
+.tab.active { color: #0f766e; font-weight: 600; border-bottom: 4rpx solid #0f766e; }
+.rank-row { display: flex; align-items: center; }
+.rank { width: 60rpx; font-size: 32rpx; font-weight: 700; color: #0f172a; }
+.info { flex: 1; }
+.uname { font-size: 30rpx; }
+.vtext { font-size: 26rpx; color: #334155; margin-top: 4rpx; }
+.note { color: #94a3b8; font-size: 22rpx; }
+.streak { color: #94a3b8; font-size: 22rpx; margin-top: 4rpx; }
+.logout { background: #fff; color: #dc2626; border-radius: 12rpx; margin-top: 24rpx; }

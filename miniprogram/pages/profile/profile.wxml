@@ -1,0 +1,34 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="tip">加载中…</view>
+  <block wx:else>
+    <view class="card">
+      <view class="name">{{user.display_name}}</view>
+      <view class="meta">连续 {{progress.streak}} 天 · 累计 {{progress.total_records}} 条记录</view>
+      <view class="meta">已点亮 {{progress.earned_count}} 枚徽章</view>
+    </view>
+
+    <view class="card" wx:if="{{!edit}}">
+      <view class="meta">性别：{{user.sex === 'male' ? '男' : user.sex === 'female' ? '女' : '未填写'}}</view>
+      <view class="meta">出生日期：{{user.birth_date || '未填写'}}</view>
+      <button size="mini" bindtap="toggleEdit">编辑资料</button>
+    </view>
+
+    <view class="card" wx:else>
+      <input class="input" value="{{form.display_name}}" placeholder="昵称" bindinput="onName" />
+      <radio-group bindchange="onSex" class="sex-group">
+        <label><radio value="male" checked="{{form.sex === 'male'}}" />男</label>
+        <label><radio value="female" checked="{{form.sex === 'female'}}" />女</label>
+      </radio-group>
+      <picker mode="date" value="{{form.birth_date}}" start="1900-01-01" end="2030-12-31" bindchange="onBirth">
+        <view class="picker">出生日期：{{form.birth_date || '请选择'}}</view>
+      </picker>
+      <button class="primary" bindtap="save">保存</button>
+    </view>
+
+    <view class="card">
+      <navigator url="/pages/suggestions/suggestions" class="link">建议反馈</navigator>
+    </view>
+
+    <button class="logout" bindtap="logout">退出登录</button>
+  </block>
+</view>

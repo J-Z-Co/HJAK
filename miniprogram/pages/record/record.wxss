@@ -1,0 +1,6 @@
+.row-head { display: flex; align-items: baseline; }
+.label { font-size: 30rpx; font-weight: 600; }
+.unit { color: #94a3b8; font-size: 24rpx; margin-left: 12rpx; }
+.caption { color: #94a3b8; font-size: 24rpx; margin-top: 8rpx; }
+.inputs { display: flex; gap: 16rpx; margin-top: 12rpx; }
+.input { flex: 1; border: 1rpx solid #e2e8f0; border-radius: 8rpx; padding: 12rpx; }

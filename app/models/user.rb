@@ -4,6 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_secure_token :api_token
+
   enum :sex, { male: 0, female: 1 }
 
   has_many :measurements, dependent: :destroy

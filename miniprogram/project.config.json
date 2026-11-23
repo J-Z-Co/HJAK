@@ -1,0 +1,13 @@
+{
+  "appid": "touristappid",
+  "compileType": "miniprogram",
+  "libVersion": "3.0.0",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false
+  },
+  "projectname": "hjax-miniprogram",
+  "description": "健康指数追踪小程序"
+}

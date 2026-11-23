@@ -19,3 +19,6 @@
 !/app/assets/builds/.keep
 /config/*.key
 /.kamal/secrets
+
+# 部署用 TLS 证书（含私钥，绝不能提交）
+/deploy/certs/

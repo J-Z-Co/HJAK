@@ -1,0 +1,23 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="tip">加载中…</view>
+  <block wx:else>
+    <view class="card" wx:for="{{rows}}" wx:key="key">
+      <view class="row-head">
+        <text class="label">{{item.label}}</text>
+        <text class="unit">{{item.unit}}</text>
+      </view>
+      <view class="caption">{{item.caption}}</view>
+      <view class="inputs">
+        <input class="input" type="digit"
+               placeholder="{{item.min}} ~ {{item.max}}"
+               value="{{item.input_value}}"
+               data-index="{{index}}" data-field="input_value" bindinput="onInput" />
+        <input wx:if="{{item.blood_pressure}}" class="input" type="digit"
+               placeholder="{{item.secondary_min}} ~ {{item.secondary_max}}"
+               value="{{item.input_secondary}}"
+               data-index="{{index}}" data-field="input_secondary" bindinput="onInput" />
+      </view>
+    </view>
+    <button class="primary" bindtap="submit">保存</button>
+  </block>
+</view>

@@ -1,0 +1,17 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="tip">加载中…</view>
+  <block wx:else>
+    <view class="card">
+      <view class="brief-line" wx:for="{{brief.lines}}" wx:key="*this">{{item}}</view>
+    </view>
+    <view class="grid">
+      <view class="cell {{item.group}}" wx:for="{{readings}}" wx:key="key"
+            data-key="{{item.key}}" bindtap="goDetail">
+        <view class="cell-label">{{item.label}}</view>
+        <view class="cell-value">{{item.value_text || '—'}}</view>
+        <view class="cell-note">{{item.note || ''}}</view>
+      </view>
+    </view>
+    <button class="primary" bindtap="goRecord">记一笔</button>
+  </block>
+</view>
