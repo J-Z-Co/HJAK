@@ -3,6 +3,8 @@ set -e
 cd /rails
 
 if [ -f Gemfile ]; then
+  # 国内 gem 下载加速（源仍是 rubygems.org，只是改走镜像下载）
+  bundle config set mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems
   if ! bundle check > /dev/null 2>&1; then
     echo "==> Gemfile 与 /bundle 不一致，增量安装"
     bundle install

@@ -1,7 +1,7 @@
 // 请求基地址。
 // 开发期：启动 Rails 后填 http://127.0.0.1:3000，并在开发者工具里勾选「不校验合法域名」。
 // 上线期：改成已备案的 https 域名（与公众平台「request 合法域名」一致）。
-const BASE_URL = 'https://yourdomain.com'
+const BASE_URL = 'http://127.0.0.1:3000'
 
 function request(path, options) {
   options = options || {}

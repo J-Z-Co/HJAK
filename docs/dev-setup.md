@@ -104,7 +104,9 @@ WSL2 默认会把 `localhost` 转发到 Windows，所以 Windows 上的开发者
 | 现象 | 处理 |
 |---|---|
 | `docker compose up` 报权限错误 | 代码在 Windows 盘（D:\）上，Docker Desktop 需在设置里允许该盘的文件共享 |
+| `docker compose up` 报路径/挂载/文件错误 | 项目路径含中文（`周的工作`），部分 Docker 版本对非 ASCII 路径支持不佳，把项目复制到纯英文路径（如 `D:\dev\hjax`）再试 |
 | `db:prepare` 连不上数据库 | 确认 `db` 容器已 healthy（`docker compose ps`），再重跑 |
 | 开发者工具报「不在合法域名」 | 勾选「不校验合法域名」，或确认 BASE_URL 与后端一致 |
 | 登录返回 `missing WeChat appid` | 没填 `.env` 里的 WECHAT_APPID/WECHAT_SECRET，或没重启 web 容器 |
 | `bundle install` 慢/失败 | 换国内镜像：`bundle config mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems` |
+| 镜像下载极慢（postgres/ruby 拉几小时） | 国内直连 Docker Hub 慢：Docker Desktop → Settings → Docker Engine，加 `"registry-mirrors"`（用阿里云镜像加速器的专属地址，或当前可用的公共加速器），Apply & Restart 后重拉 |

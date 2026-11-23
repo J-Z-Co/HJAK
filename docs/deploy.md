@@ -8,6 +8,45 @@ Postgres + Rails/Puma + Nginx，供网页和微信小程序共用。
 微信小程序后台的「request 合法域名」强制要求：**已 ICP 备案的域名 + HTTPS**。Vercel 在
 海外，无法备案，因此后端必须迁到大陆服务器。
 
+## 0.5 备案前：用公网 IP 在服务器上快速试跑（可选）
+
+想在备案通过前就在服务器上调试，可跳过域名，直接用「公网 IP + 端口」访问（仅调试，发布仍走下方正式流程）。
+
+1. SSH 登录 CVM（腾讯云控制台「登录」按钮，或本地 SSH）。
+2. 装 Docker（装完建议配腾讯云内网镜像加速 `mirror.ccs.tencentyun.com`）：
+
+   ```bash
+   curl -fsSL https://get.docker.com | sh
+   sudo systemctl enable --now docker
+   ```
+
+3. 拉代码：
+
+   ```bash
+   git clone https://github.com/J-Z-Co/HJAK.git
+   cd HJAK
+   ```
+
+4. 建 `.env`（填 `WECHAT_APPID` / `WECHAT_SECRET`）：
+
+   ```bash
+   cp .env.example .env && vi .env
+   ```
+
+5. 起开发服务：
+
+   ```bash
+   docker compose up -d --build
+   docker compose exec web bin/rails db:prepare
+   ```
+
+6. 腾讯云「安全组」放行 **3000** 端口（入站 TCP 3000，来源 0.0.0.0/0）。
+7. 浏览器访问 `http://<公网IP>:3000/up` 应返回 200。
+
+小程序端把 `BASE_URL` 改成 `http://<公网IP>:3000`，开发者工具勾「不校验合法域名」。
+
+> 备案期间 80/443 通常被封，但 3000 等自定义端口一般不受影响。这只是调试环境，正式发布仍用下方「域名 + HTTPS」流程。
+
 ## 1. 买域名 + 云服务器 + 备案（一次性，约 1–3 周）
 
 1. 在**腾讯云或阿里云**买域名，完成**域名实名认证**（个人用身份证）。
