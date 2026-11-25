@@ -24,7 +24,7 @@ services:
         condition: service_healthy
     environment:
       RAILS_ENV: production
-      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:?请在项目根目录 .env 里设置 RAILS_MASTER_KEY}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?请在项目根目录 .env 里设置 SECRET_KEY_BASE}
       DATABASE_URL: postgres://phoenix_list:${POSTGRES_PASSWORD}@db:5432/phoenix_list_production
       APP_HOST: ${APP_HOST:?请在项目根目录 .env 里设置 APP_HOST}
       WECHAT_APPID: ${WECHAT_APPID:-}

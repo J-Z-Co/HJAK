@@ -2,6 +2,12 @@
 ARG RUBY_VERSION=3.4.10
 FROM docker.io/library/ruby:${RUBY_VERSION}-slim-bookworm
 
+# 国内 apt 源加速（deb.debian.org → 清华镜像），避免 CVM 上装依赖卡顿
+RUN if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
+      sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list.d/debian.sources; \
+    elif [ -f /etc/apt/sources.list ]; then \
+      sed -i 's|deb.debian.org|mirrors.tuna.tsinghua.edu.cn|g' /etc/apt/sources.list; \
+    fi
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       build-essential git pkg-config libyaml-dev libpq-dev \
@@ -17,6 +23,8 @@ ENV RAILS_ENV=production \
 
 # 先装依赖，利于镜像层缓存。
 COPY Gemfile Gemfile.lock ./
+# 国内 gem 下载加速（源仍是 rubygems.org，只是改走镜像下载）
+RUN bundle config set mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems
 RUN bundle install
 
 COPY . .
