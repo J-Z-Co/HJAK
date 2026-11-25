@@ -1,23 +1,93 @@
 <view class="page">
   <view wx:if="{{loading}}" class="tip">加载中…</view>
   <block wx:else>
-    <view class="card" wx:for="{{rows}}" wx:key="key">
-      <view class="row-head">
-        <text class="label">{{item.label}}</text>
-        <text class="unit">{{item.unit}}</text>
-      </view>
-      <view class="caption">{{item.caption}}</view>
-      <view class="inputs">
-        <input class="input" type="digit"
-               placeholder="{{item.min}} ~ {{item.max}}"
-               value="{{item.input_value}}"
-               data-index="{{index}}" data-field="input_value" bindinput="onInput" />
-        <input wx:if="{{item.blood_pressure}}" class="input" type="digit"
-               placeholder="{{item.secondary_min}} ~ {{item.secondary_max}}"
-               value="{{item.input_secondary}}"
-               data-index="{{index}}" data-field="input_secondary" bindinput="onInput" />
+    <!-- Hero -->
+    <view class="hero hero-record">
+      <view class="hero-inner">
+        <view class="hero-eyebrow">{{eyebrow}}</view>
+        <view class="hero-title-row">
+          <view class="hero-title">记录</view>
+          <view class="ring-badge">
+            <view wx:if="{{progress.today_complete}}" class="ring-check">✓</view>
+            <block wx:else>
+              <view class="ring-num">{{progress.today_done}}/{{progress.today_total}}</view>
+              <view class="ring-label">今天</view>
+            </block>
+          </view>
+        </view>
+        <view class="hero-pills">
+          <view class="hero-pill">{{progress.streak > 0 ? '连续 ' + progress.streak + ' 天' : '今天开始连续记录'}}</view>
+        </view>
       </view>
     </view>
-    <button class="primary" bindtap="submit">保存</button>
+
+    <!-- 测量日 -->
+    <view class="card date-card">
+      <view class="tile tile-sm date-icon">🕐</view>
+      <view class="date-label">测量日</view>
+      <picker mode="date" value="{{recorded_on}}" start="2000-01-01" end="{{recorded_on}}" bindchange="onDate">
+        <view class="date-value">{{recorded_on}}</view>
+      </picker>
+    </view>
+
+    <!-- 该测的行 -->
+    <view class="row" wx:for="{{shown}}" wx:key="key">
+      <view class="row-head">
+        <view class="tile" style="background: {{item.tileBg}};"><image class="tile-icon" src="{{item.icon}}" mode="aspectFit" /></view>
+        <view class="row-info">
+          <view class="row-label">{{item.label}}<text class="row-unit">{{item.unit}}</text></view>
+          <view class="row-caption">{{item.caption}}</view>
+        </view>
+        <view class="pill" style="background: {{item.pillBg}}; color: {{item.pillColor}};">{{item.pillText}}</view>
+      </view>
+      <view class="row-inputs">
+        <input class="field row-field" type="digit"
+               placeholder="{{item.min}} ~ {{item.max}}"
+               value="{{item.input_value}}"
+               data-list="shown" data-index="{{index}}" data-field="input_value" bindinput="onInput" />
+        <view wx:if="{{item.blood_pressure}}" class="slash">/</view>
+        <input wx:if="{{item.blood_pressure}}" class="field row-field" type="digit"
+               placeholder="{{item.secondary_min}} ~ {{item.secondary_max}}"
+               value="{{item.input_secondary}}"
+               data-list="shown" data-index="{{index}}" data-field="input_secondary" bindinput="onInput" />
+      </view>
+      <view wx:if="{{item.error}}" class="row-error">{{item.error}}</view>
+    </view>
+
+    <!-- 暂时不用记（折叠） -->
+    <view wx:if="{{early.length}}" class="early">
+      <view class="early-head" bindtap="toggleEarly">
+        <view>暂时不用记 · {{early.length}} 项</view>
+        <view class="early-toggle">{{earlyOpen ? '收起' : '展开'}} <text class="chevron">{{earlyOpen ? '⌄' : '›'}}</text></view>
+      </view>
+      <view wx:if="{{earlyOpen}}" class="early-body">
+        <view class="row" wx:for="{{early}}" wx:key="key">
+          <view class="row-head">
+            <view class="tile" style="background: {{item.tileBg}};"><image class="tile-icon" src="{{item.icon}}" mode="aspectFit" /></view>
+            <view class="row-info">
+              <view class="row-label">{{item.label}}<text class="row-unit">{{item.unit}}</text></view>
+              <view class="row-caption">{{item.caption}}</view>
+            </view>
+            <view class="pill" style="background: {{item.pillBg}}; color: {{item.pillColor}};">{{item.pillText}}</view>
+          </view>
+          <view class="row-inputs">
+            <input class="field row-field" type="digit"
+                   placeholder="{{item.min}} ~ {{item.max}}"
+                   value="{{item.input_value}}"
+                   data-list="early" data-index="{{index}}" data-field="input_value" bindinput="onInput" />
+            <view wx:if="{{item.blood_pressure}}" class="slash">/</view>
+            <input wx:if="{{item.blood_pressure}}" class="field row-field" type="digit"
+                   placeholder="{{item.secondary_min}} ~ {{item.secondary_max}}"
+                   value="{{item.input_secondary}}"
+                   data-list="early" data-index="{{index}}" data-field="input_secondary" bindinput="onInput" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 保存 -->
+    <view class="save-bar">
+      <button class="btn" bindtap="submit">保存本次记录</button>
+    </view>
   </block>
 </view>

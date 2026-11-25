@@ -1,19 +1,37 @@
 <view class="page">
-  <view class="card">
-    <textarea class="textarea" value="{{body}}" placeholder="写下你的建议或反馈" bindinput="onBody" />
-    <button class="primary" bindtap="submit">提交</button>
+  <!-- Hero -->
+  <view class="hero hero-record">
+    <view class="hero-inner">
+      <view class="hero-title">改善建议</view>
+      <view class="hero-subtitle">大家都能看到。觉得合理就点一下，有想法可以补充。</view>
+    </view>
+  </view>
+
+  <!-- 写建议 -->
+  <view class="card form-card">
+    <view class="field-label">写一条建议</view>
+    <textarea class="field textarea" value="{{body}}" placeholder="想让这个应用哪里更好" maxlength="1000" bindinput="onBody" />
+    <button class="btn" bindtap="submit">提交</button>
   </view>
 
   <view wx:if="{{loading}}" class="tip">加载中…</view>
-  <view class="card" wx:for="{{suggestions}}" wx:key="id">
-    <view class="s-body">{{item.body}}</view>
-    <view class="s-meta">{{item.author.display_name}} · 合理 {{item.reasonable_count}} · 有误 {{item.wrong_count}}</view>
-    <view class="votes">
-      <button size="mini" data-id="{{item.id}}" data-choice="reasonable" bindtap="vote">合理</button>
-      <button size="mini" data-id="{{item.id}}" data-choice="wrong" bindtap="vote">有误</button>
+
+  <block wx:else>
+    <view wx:if="{{!suggestions.length}}" class="card empty">还没有建议</view>
+    <view class="s-list">
+      <view wx:for="{{suggestions}}" wx:key="id" class="card s-card">
+        <view class="s-body">{{item.body}}</view>
+        <view class="s-meta">{{item.author.display_name}} · 合理 {{item.reasonable_count}} · 有误 {{item.wrong_count}}</view>
+        <view class="s-actions">
+          <view class="s-btn" data-id="{{item.id}}" data-choice="reasonable" bindtap="vote">👍 合理</view>
+          <view class="s-btn" data-id="{{item.id}}" data-choice="wrong" bindtap="vote">👎 有误</view>
+        </view>
+        <view wx:if="{{item.replies.length}}" class="s-replies">
+          <view wx:for="{{item.replies}}" wx:for-item="reply" wx:key="id" class="s-reply">
+            {{reply.author.display_name}}：{{reply.body}}
+          </view>
+        </view>
+      </view>
     </view>
-    <view class="reply" wx:for="{{item.replies}}" wx:for-item="reply" wx:key="id">
-      {{reply.author.display_name}}：{{reply.body}}
-    </view>
-  </view>
+  </block>
 </view>

@@ -1,20 +1,47 @@
 <view class="page">
-  <view class="card">
-    <view class="subtitle">我的群组</view>
-    <view wx:if="{{!loading && groups.length === 0}}" class="tip">还没有群组</view>
-    <view class="group" wx:for="{{groups}}" wx:key="public_id" data-id="{{item.public_id}}" bindtap="open">
-      <text class="gname">{{item.name}}</text>
-      <text class="gcode">代号 {{item.public_id}} · {{item.member_count}} 人 · {{item.role === 'owner' ? '群主' : '成员'}}</text>
+  <view wx:if="{{loading}}" class="tip">加载中…</view>
+  <block wx:else>
+    <!-- Hero -->
+    <view class="hero hero-groups">
+      <view class="hero-inner">
+        <view class="hero-title">群组</view>
+        <view class="hero-subtitle">和家人互相看指数，比一比谁记得最勤。</view>
+        <view class="hero-actions">
+          <view class="hero-btn hero-btn-solid" data-mode="create" bindtap="setMode">＋ 创建群组</view>
+          <view class="hero-btn hero-btn-ghost" data-mode="join" bindtap="setMode">◉ 加入群组</view>
+        </view>
+      </view>
     </view>
-  </view>
-  <view class="card">
-    <view class="subtitle">创建群组</view>
-    <input class="input" value="{{newName}}" placeholder="群组名称" bindinput="onName" />
-    <button class="primary" bindtap="create">创建</button>
-  </view>
-  <view class="card">
-    <view class="subtitle">加入群组</view>
-    <input class="input" value="{{joinCode}}" placeholder="8 位代号或分享链接" bindinput="onCode" />
-    <button class="primary" bindtap="join">加入</button>
-  </view>
+
+    <!-- 创建/加入 内联表单 -->
+    <view wx:if="{{mode === 'create'}}" class="card form-card">
+      <input class="field" value="{{name}}" placeholder="群组名称" bindinput="onName" />
+      <button class="btn" bindtap="create">创建</button>
+    </view>
+    <view wx:if="{{mode === 'join'}}" class="card form-card">
+      <input class="field" value="{{code}}" placeholder="8 位代号或分享链接" bindinput="onCode" />
+      <button class="btn" bindtap="join">加入</button>
+    </view>
+
+    <!-- 群组列表 -->
+    <block wx:if="{{groups.length}}">
+      <view class="card list-group">
+        <view wx:for="{{groups}}" wx:key="public_id" class="list-row group-row" data-id="{{item.public_id}}" bindtap="open">
+          <view class="group-avatar">{{item.initial}}</view>
+          <view class="group-info">
+            <view class="group-name">{{item.name}}</view>
+            <view class="group-meta">{{item.member_count}} 人 · {{item.role === 'owner' ? '群主' : '成员'}}</view>
+          </view>
+          <view class="chevron">›</view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="card empty">
+        <view class="tile tile-lg empty-icon">👨‍👩‍👧‍👦</view>
+        <view class="empty-title">还没有加入群组</view>
+        <view class="empty-sub">创建一个，再把代号发给家人。</view>
+      </view>
+    </block>
+  </block>
 </view>

@@ -2,9 +2,7 @@ const app = getApp()
 const api = require('../../utils/api')
 
 Page({
-  data: {
-    loading: true, public_id: '', group: null, boards: [], board: 'health', rows: []
-  },
+  data: { loading: true, public_id: '', group: null, boards: [], board: 'health', rows: [] },
 
   onLoad(options) {
     this.setData({ public_id: options.public_id || '' })
@@ -15,7 +13,10 @@ Page({
     try {
       await app.ensureLogin()
       const data = await api.getGroup(this.data.public_id, this.data.board)
-      const rows = data.rows.map((r, i) => Object.assign({}, r, { _key: r.user ? r.user.id : i }))
+      const rows = data.rows.map((r) => Object.assign({}, r, {
+        initial: (r.user && r.user.display_name ? r.user.display_name : '?')[0],
+        rankText: r.rank || '—'
+      }))
       this.setData({ loading: false, group: data.group, boards: data.boards, board: data.board, rows: rows })
     } catch (e) {
       this.setData({ loading: false })

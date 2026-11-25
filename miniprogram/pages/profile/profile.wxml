@@ -1,34 +1,74 @@
 <view class="page">
   <view wx:if="{{loading}}" class="tip">加载中…</view>
   <block wx:else>
-    <view class="card">
-      <view class="name">{{user.display_name}}</view>
-      <view class="meta">连续 {{progress.streak}} 天 · 累计 {{progress.total_records}} 条记录</view>
-      <view class="meta">已点亮 {{progress.earned_count}} 枚徽章</view>
+    <!-- Hero -->
+    <view class="hero hero-me">
+      <view class="hero-inner">
+        <view class="hero-eyebrow">我</view>
+        <view class="hero-title-row">
+          <view class="hero-title">{{user.display_name}}</view>
+          <view class="avatar">{{avatar}}</view>
+        </view>
+        <view class="hero-stats">
+          <view class="stat">
+            <view class="stat-num">{{progress.streak}}</view>
+            <view class="stat-label">连续天数</view>
+          </view>
+          <view class="stat">
+            <view class="stat-num">{{progress.best_streak}}</view>
+            <view class="stat-label">最长连续</view>
+          </view>
+          <view class="stat">
+            <view class="stat-num">{{progress.earned_count}}/{{progress.badges.length}}</view>
+            <view class="stat-label">徽章</view>
+          </view>
+        </view>
+      </view>
     </view>
 
-    <view class="card" wx:if="{{!edit}}">
-      <view class="meta">性别：{{user.sex === 'male' ? '男' : user.sex === 'female' ? '女' : '未填写'}}</view>
-      <view class="meta">出生日期：{{user.birth_date || '未填写'}}</view>
-      <button size="mini" bindtap="toggleEdit">编辑资料</button>
+    <!-- 提示 -->
+    <view wx:if="{{warning}}" class="warn">⚠️ 填写性别和出生日期后才能计算需要它们的指数</view>
+
+    <!-- 徽章 -->
+    <view class="section-head">
+      <view class="section-title">徽章</view>
+      <view class="section-sub">只奖励坚持记录，不比健康结果</view>
+    </view>
+    <view class="badge-grid">
+      <view wx:for="{{badges}}" wx:key="key" class="badge">
+        <view class="badge-icon" style="background: {{item.earned ? 'linear-gradient(135deg, #fcd34d, #fb923c, #ec4899)' : '#f5f5f4'}};">{{item.earned ? item.icon : '🔒'}}</view>
+        <view class="badge-title {{item.earned ? '' : 'dim'}}">{{item.title}}</view>
+        <view class="badge-hint">{{item.hint}}</view>
+      </view>
     </view>
 
-    <view class="card" wx:else>
-      <input class="input" value="{{form.display_name}}" placeholder="昵称" bindinput="onName" />
+    <!-- 资料 -->
+    <view class="section-head"><view class="section-title">资料</view></view>
+    <view class="card form">
+      <view class="field-label">显示名</view>
+      <input style="height: 50rpx; display: block; box-sizing: border-box" class="field" value="{{form.display_name}}" bindinput="onName" />
+      <view class="field-label">性别</view>
       <radio-group bindchange="onSex" class="sex-group">
-        <label><radio value="male" checked="{{form.sex === 'male'}}" />男</label>
-        <label><radio value="female" checked="{{form.sex === 'female'}}" />女</label>
+        <label><radio value="male" checked="{{form.sex === 'male'}}" color="#059669" />男</label>
+        <label><radio value="female" checked="{{form.sex === 'female'}}" color="#059669" />女</label>
       </radio-group>
+      <view class="field-label">出生日期</view>
       <picker mode="date" value="{{form.birth_date}}" start="1900-01-01" end="2030-12-31" bindchange="onBirth">
-        <view class="picker">出生日期：{{form.birth_date || '请选择'}}</view>
+        <view class="field picker">{{form.birth_date || '未填写'}}</view>
       </picker>
-      <button class="primary" bindtap="save">保存</button>
+      <button class="btn" bindtap="save">保存资料</button>
     </view>
 
-    <view class="card">
-      <navigator url="/pages/suggestions/suggestions" class="link">建议反馈</navigator>
+    <!-- 建议 -->
+    <view class="section-head"><view class="section-title">记录</view></view>
+    <view class="card list-group">
+      <view class="list-row" bindtap="goSuggestions">
+        <view class="list-left"><text class="tile tile-sm list-icon">💡</text>改善建议</view>
+        <view class="chevron">›</view>
+      </view>
     </view>
 
+    <!-- 退出 -->
     <button class="logout" bindtap="logout">退出登录</button>
   </block>
 </view>

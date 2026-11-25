@@ -1,26 +1,37 @@
 <view class="page">
   <view wx:if="{{loading}}" class="tip">加载中…</view>
   <block wx:else>
-    <view class="card">
-      <view class="gname">{{group.name}}</view>
-      <view class="gcode">代号 {{group.public_id}} · {{group.member_count}} 人 · {{group.role === 'owner' ? '群主' : '成员'}}</view>
+    <!-- Hero -->
+    <view class="hero hero-groups">
+      <view class="hero-inner">
+        <view class="hero-title">{{group.name}}</view>
+        <view class="hero-subtitle">代号 {{group.public_id}} · {{group.member_count}} 人 · {{group.role === 'owner' ? '群主' : '成员'}}</view>
+      </view>
     </view>
 
-    <view class="tabs">
-      <view class="tab {{board === item.key ? 'active' : ''}}"
-            wx:for="{{boards}}" wx:key="key"
+    <!-- 榜单切换 -->
+    <view class="board-tabs">
+      <view wx:for="{{boards}}" wx:key="key"
+            class="board-tab {{board === item.key ? 'active' : ''}}"
             data-key="{{item.key}}" bindtap="switchBoard">{{item.label}}</view>
     </view>
 
-    <view class="card rank-row" wx:for="{{rows}}" wx:key="_key">
-      <view class="rank">{{item.rank || '—'}}</view>
-      <view class="info">
-        <view class="uname">{{item.user.display_name}}</view>
-        <view class="vtext">{{item.value_text}} <text class="note">{{item.note}}</text></view>
-        <view class="streak">连续 {{item.streak}} 天 · 被催 {{item.nudge_count}} 次</view>
+    <!-- 榜单行 -->
+    <view class="card list-group">
+      <view wx:for="{{rows}}" wx:key="user.id" class="list-row board-row">
+        <view class="rank {{item.rank === 1 ? 'rank-1' : ''}}">{{item.rankText}}</view>
+        <view class="member-avatar">{{item.initial}}</view>
+        <view class="member-info">
+          <view class="member-name">{{item.user.display_name}}</view>
+          <view class="member-note">{{item.note || ''}}</view>
+        </view>
+        <view class="member-right">
+          <view class="member-value">{{item.value_text}}</view>
+          <view class="member-streak">连续 {{item.streak}} 天</view>
+        </view>
+        <view wx:if="{{item.nudgeable && !item.nudged_today}}" class="nudge-btn"
+              data-id="{{item.user.id}}" bindtap="nudge">提醒</view>
       </view>
-      <button wx:if="{{item.nudgeable && !item.nudged_today}}" size="mini"
-              data-id="{{item.user.id}}" bindtap="nudge">提醒</button>
     </view>
 
     <button class="logout" bindtap="leave">退出群组</button>

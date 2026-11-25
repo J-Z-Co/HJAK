@@ -1,17 +1,67 @@
 <view class="page">
   <view wx:if="{{loading}}" class="tip">加载中…</view>
   <block wx:else>
-    <view class="card">
-      <view class="brief-line" wx:for="{{brief.lines}}" wx:key="*this">{{item}}</view>
-    </view>
-    <view class="grid">
-      <view class="cell {{item.group}}" wx:for="{{readings}}" wx:key="key"
-            data-key="{{item.key}}" bindtap="goDetail">
-        <view class="cell-label">{{item.label}}</view>
-        <view class="cell-value">{{item.value_text || '—'}}</view>
-        <view class="cell-note">{{item.note || ''}}</view>
+    <!-- Hero 横幅 -->
+    <view class="hero hero-indices">
+      <view class="hero-inner">
+        <view class="hero-eyebrow">{{board.basis || ''}}</view>
+        <view class="hero-title-row">
+          <view class="hero-title">指数</view>
+          <view wx:if="{{board.mean !== null && board.mean !== undefined}}" class="hero-score">
+            <view class="hero-score-num">{{board.mean}}</view>
+            <view class="hero-score-label">综合偏离 · {{meanWord}}</view>
+          </view>
+        </view>
+        <view class="hero-subtitle">{{board.banner || ''}}</view>
+        <view wx:if="{{meanPct !== null}}" class="meter hero-meter">
+          <view class="meter-track hero-meter-track"></view>
+          <view class="meter-dot" style="left: {{meanPct}}%; background: {{meanColor}};"></view>
+        </view>
       </view>
     </view>
-    <button class="primary" bindtap="goRecord">记一笔</button>
+
+    <!-- 简报卡 -->
+    <view wx:if="{{brief.lines.length}}" class="card brief-card">
+      <view class="tile tile-sm brief-icon">✨</view>
+      <view class="brief-lines">
+        <view wx:for="{{brief.lines}}" wx:key="*this" class="{{index === 0 ? 'brief-lead' : 'brief-sub'}}">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 分组指数 -->
+    <view wx:for="{{brief.groups}}" wx:key="title" class="section">
+      <view class="section-head">
+        <view class="section-title">{{item.title}}</view>
+        <view wx:if="{{item.status && !item.note}}" class="pill section-pill">{{item.status}}</view>
+      </view>
+
+      <view wx:if="{{item.note}}" class="card section-note">{{item.note}}</view>
+
+      <view wx:else class="reading-list">
+        <view wx:for="{{item.readings}}" wx:for-item="r" wx:key="key"
+              class="card reading {{r.clickable ? 'tappable' : ''}}"
+              data-key="{{r.key}}" data-clickable="{{r.clickable}}" bindtap="onReadingTap">
+          <view class="reading-main">
+            <view class="tile" style="background: {{r.tileBg}};"><image class="tile-icon" src="{{r.icon}}" mode="aspectFit" /></view>
+            <view class="reading-info">
+              <view class="reading-label">{{r.label}}</view>
+              <view wx:if="{{r.value_text}}" class="reading-value" style="color: {{r.devColor || '#1c1917'}};">{{r.value_text}}</view>
+            </view>
+            <view class="reading-aside">
+              <view wx:if="{{r.devWord}}" class="pill" style="background: {{r.devColor}}; color: #fff;">{{r.devWord}}</view>
+              <view wx:if="{{r.clickable}}" class="chevron">›</view>
+            </view>
+          </view>
+          <view wx:if="{{r.meterPct !== null}}" class="meter reading-meter">
+            <view class="meter-track"></view>
+            <view class="meter-dot" style="left: {{r.meterPct}}%; background: {{r.devColor}};"></view>
+          </view>
+          <view wx:if="{{r.note}}" class="reading-note">{{r.note}}</view>
+          <view wx:if="{{r.stale_text}}" class="reading-stale">🕒 {{r.stale_text}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{item.aside}}" class="section-aside">{{item.aside}}</view>
+    </view>
   </block>
 </view>

@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "群组"
+  "navigationBarTitleText": "群组",
+  "navigationBarBackgroundColor": "#f43f5e",
+  "navigationBarTextStyle": "white"
 }

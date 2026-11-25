@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/index/index",
     "pages/record/record",
+    "pages/index/index",
     "pages/detail/detail",
     "pages/groups/groups",
     "pages/group/group",
@@ -10,14 +10,17 @@
   ],
   "window": {
     "navigationBarTitleText": "健康指数",
-    "navigationBarBackgroundColor": "#0f766e",
+    "navigationBarBackgroundColor": "#7c3aed",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f8fafc"
+    "backgroundColor": "#f4f1ec"
   },
   "tabBar": {
-    "color": "#64748b",
-    "selectedColor": "#0f766e",
+    "custom": true,
+    "color": "#a8a29e",
+    "selectedColor": "#1c1917",
+    "backgroundColor": "#ffffff",
     "list": [
+      { "pagePath": "pages/record/record", "text": "记录" },
       { "pagePath": "pages/index/index", "text": "指数" },
       { "pagePath": "pages/groups/groups", "text": "群组" },
       { "pagePath": "pages/profile/profile", "text": "我的" }

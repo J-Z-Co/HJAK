@@ -1,16 +1,45 @@
 <view class="page">
   <view wx:if="{{loading}}" class="tip">加载中…</view>
   <block wx:else>
-    <view class="card">
-      <view class="label">{{reading.label}}</view>
-      <view class="value">{{reading.value_text || '—'}}</view>
-      <view class="note">{{reading.note || reading.stale_text || ''}}</view>
+    <!-- Hero -->
+    <view class="hero hero-indices">
+      <view class="hero-inner">
+        <view class="hero-back" bindtap="back">‹ 返回指数</view>
+        <view class="hero-title-row">
+          <view class="hero-title">{{reading.label}}</view>
+          <view wx:if="{{devWord}}" class="pill" style="background: {{devColor}}; color: #fff;">{{devWord}}</view>
+        </view>
+        <view wx:if="{{reading.value_text}}" class="hero-value">{{reading.value_text}}</view>
+        <view wx:if="{{meterPct !== null}}" class="meter hero-meter">
+          <view class="meter-track hero-meter-track"></view>
+          <view class="meter-dot" style="left: {{meterPct}}%; background: {{devColor}};"></view>
+        </view>
+      </view>
     </view>
-    <view class="card">
-      <view class="exp">{{explanation}}</view>
+
+    <view wx:if="{{reading.stale_text}}" class="warn">🕒 {{reading.stale_text}}</view>
+
+    <!-- 时间范围 -->
+    <view class="segmented">
+      <view wx:for="{{ranges}}" wx:key="*this"
+            class="segment {{range === item[0] ? 'active' : ''}}"
+            data-range="{{item[0]}}" bindtap="switchRange">{{item[1]}}</view>
     </view>
-    <view class="card" wx:if="{{series && series.points.length}}">
-      <view class="point" wx:for="{{series.points}}" wx:key="at">{{item.label}}</view>
+
+    <!-- 图表 -->
+    <view class="card chart-card">
+      <block wx:if="{{series && series.points.length}}">
+        <canvas type="2d" id="chart" class="chart"></canvas>
+        <view wx:if="{{showLegend}}" class="legend">
+          <view class="legend-item"><view class="legend-swatch" style="background:#EDE9FE;"></view>健康区</view>
+          <view class="legend-item"><view class="legend-swatch" style="background:#FEF9C3;"></view>亚健康</view>
+          <view class="legend-item"><view class="legend-swatch" style="background:#FECACA;"></view>警告区</view>
+        </view>
+      </block>
+      <view wx:else class="chart-empty">这段时间还没有足够的记录</view>
     </view>
+
+    <!-- 说明 -->
+    <view class="explanation">{{explanation}}</view>
   </block>
 </view>

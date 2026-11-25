@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "记一笔"
+  "navigationBarTitleText": "记录",
+  "navigationBarBackgroundColor": "#7c3aed",
+  "navigationBarTextStyle": "white"
 }

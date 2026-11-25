@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "建议反馈"
+  "navigationBarTitleText": "改善建议",
+  "navigationBarBackgroundColor": "#7c3aed",
+  "navigationBarTextStyle": "white"
 }
