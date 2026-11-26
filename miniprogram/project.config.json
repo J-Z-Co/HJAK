@@ -1,7 +1,7 @@
 {
   "appid": "wx97c2f2e82eebc35b",
   "compileType": "miniprogram",
-  "libVersion": "3.0.0",
+  "libVersion": "3.18.0",
   "setting": {
     "es6": true,
     "postcss": true,
@@ -23,7 +23,9 @@
       "ignore": [],
       "disablePlugins": [],
       "outputPath": ""
-    }
+    },
+    "swc": false,
+    "disableSWC": true
   },
   "projectname": "梅珊知安",
   "description": "梅珊知安小程序",

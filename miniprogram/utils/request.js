@@ -1,7 +1,21 @@
 // 请求基地址。
-// 开发期：启动 Rails 后填 http://127.0.0.1:3000，并在开发者工具里勾选「不校验合法域名」。
-// 上线期：改成已备案的 https 域名（与公众平台「request 合法域名」一致）。
-const BASE_URL = 'http://172.19.176.1:3000'
+// 通过 wx.getAccountInfoSync().miniProgram.envVersion 自动区分环境，避免「上传时忘了改地址」：
+//   develop        —— 开发者工具/预览：走本机后端 http://127.0.0.1:3000（开发期勾选「不校验合法域名」）
+//   trial/release  —— 体验版/提交审核/正式版：走已备案的 https 域名
+// 上线前把 PROD_BASE_URL 替换成你的真实域名（不带路径、结尾不带 /），与公众平台「request 合法域名」一致。
+const PROD_BASE_URL = 'https://hjak.cn'
+const DEV_BASE_URL = 'http://127.0.0.1:3000'
+
+function resolveBaseUrl() {
+  try {
+    if (wx.getAccountInfoSync().miniProgram.envVersion === 'develop') {
+      return DEV_BASE_URL
+    }
+  } catch (e) {
+    // 取不到环境信息时按生产地址处理，保证线上可用
+  }
+  return PROD_BASE_URL
+}
 
 function request(path, options) {
   options = options || {}
@@ -10,7 +24,7 @@ function request(path, options) {
 
   return new Promise((resolve, reject) => {
     wx.request({
-      url: BASE_URL + path,
+      url: resolveBaseUrl() + path,
       method: options.method || 'GET',
       data: options.data || {},
       header: Object.assign(

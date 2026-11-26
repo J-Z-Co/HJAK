@@ -21,4 +21,7 @@
 /.kamal/secrets
 
 # 部署用 TLS 证书（含私钥，绝不能提交）
-/deploy/certs/.DS_Store
+/deploy/certs/
+
+# macOS 系统文件
+.DS_Store

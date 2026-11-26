@@ -1,6 +1,6 @@
 {
   "libVersion": "3.18.0",
-  "projectname": "%E6%A2%85%E7%8F%8A%E7%9F%A5%E5%AE%89",
+  "projectname": "miniprogram",
   "setting": {
     "urlCheck": false,
     "coverView": false,
