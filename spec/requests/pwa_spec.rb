@@ -6,8 +6,8 @@ RSpec.describe "主屏幕清单", type: :request do
 
     expect(response).to have_http_status(:ok)
     body = response.parsed_body
-    expect(body["name"]).to eq("合家安康")
-    expect(body["short_name"]).to eq("合家康")
+    expect(body["name"]).to eq("梅珊知安")
+    expect(body["short_name"]).to eq("梅珊知安")
     expect(body["display"]).to eq("standalone")
     expect(body["start_url"]).to eq("/")
     expect(body["scope"]).to eq("/")

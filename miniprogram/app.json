@@ -9,7 +9,7 @@
     "pages/profile/profile"
   ],
   "window": {
-    "navigationBarTitleText": "健康指数",
+    "navigationBarTitleText": "梅珊知安",
     "navigationBarBackgroundColor": "#7c3aed",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f4f1ec"
